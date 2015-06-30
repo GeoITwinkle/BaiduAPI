@@ -71,15 +71,24 @@ if __name__ == '__main__':
 
     f_in = open("Input/Address.csv", "r").readlines()
     f_out = codecs.open("Output/Geocoded Address.csv", "w",  encoding = "utf-8-sig")
-    f_out.write("OBJECTID,Address,Latitude_BD09,Longitude_BD09,Latitude_WGS84,Longitude_WGS84,Precise,Confidence,Level\n") 
+    f_out.write("OBJECTID,Address,Latitude_BD09,Longitude_BD09,Latitude_WGS84,Longitude_WGS84,Precise,Confidence,Level\n")
 
-    for f in f_in[1:]: 
+    f_err = codecs.open("Output/Geocoding Error.csv", "w",  encoding = "utf-8-sig")
+    f_err.write("OBJECTID,ADDRESS\n")
+
+    for f in f_in[1:]:        
         r = f.replace('\n', '').split(',')
         oid = r[0]
         address = r[1]
-        f_out.write(str.format("{0},{1},{2}\n", oid, address, Geocoding(access, city, address)))
-
+        try:
+            geocode = Geocoding(access, city, address)
+            f_out.write(str.format("{0},{1},{2}\n", oid, address, geocode))
+        except:
+            f_err.write(str.format("{0},{1}\n", oid, address))
+            continue
+                        
     f_out.close()
+    f_err.close()
     os.remove("temp.txt")
 
     end = datetime.now()
