@@ -34,15 +34,15 @@ if __name__ == '__main__':
     start = datetime.now()
     print(str.format("Converting WGS84 to BD09. ({0})", start))
     
-    wgs = open("Input/WGS84.csv", "r").readlines()
-    bd = codecs.open("Output/BD09.csv", "w",  encoding = "utf-8-sig")    
+    wgs = codecs.open("Input/WGS84.csv", "r", encoding = "utf-8-sig").readlines()
+    bd = codecs.open("Output/BD09.csv", "w", encoding = "utf-8-sig")    
     bd.write("OBJECTID,X_WGS84,Y_WGS84,X_BD09,Y_BD09\n")
 
     i = oid = 0
     wgs84 = []
     for r in wgs[1:]:
         i += 1
-        s = r.replace('\n', '').split(',')
+        s = r.strip().split(',')
         wgs84.append(','.join(s[1:]))
         
         if i % 100 == 0 or i == len(wgs) - 1:           

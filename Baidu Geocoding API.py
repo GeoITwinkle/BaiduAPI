@@ -44,9 +44,9 @@ def Geocoding(access, city, address):
         if 'location' in r:                
             lat_bd09 = r['location']['lat']            
             lng_bd09 = r['location']['lng']
-            # BD09 to WGS04 conversion
-            lat_wgs84 = -0.039884925 + 0.000368817 * lng_bd09 + 0.999770936 * lat_bd09
-            lng_wgs84 = -0.081791896 + 1.00062635 * lng_bd09 - 0.0000471711 * lat_bd09
+            # BD09 to WGS04 conversion (region-dependent)
+            lat_wgs84 = -0.0398742657492583 + 0.000368742795507935 * lng_bd09 + 0.999770842271639 * lat_bd09
+            lng_wgs84 = -0.081774703936586 + 1.00062621134481 * lng_bd09 - 0.0000472322372012116 * lat_bd09
             
         if 'precise' in r:
             precise = r['precise']
@@ -69,22 +69,22 @@ if __name__ == '__main__':
     start = datetime.now()
     print(str.format("Geocoding Address in {0} ({1})", city, start))
 
-    f_in = open("Input/Address.csv", "r").readlines()
-    f_out = codecs.open("Output/Geocoded Address.csv", "w",  encoding = "utf-8-sig")
+    f_in = codecs.open("Input/Address.csv", "r", encoding = "utf-8-sig").readlines()
+    f_out = codecs.open("Output/Geocoded Address.csv", "w", encoding = "utf-8-sig")
     f_out.write("OBJECTID,Address,Latitude_BD09,Longitude_BD09,Latitude_WGS84,Longitude_WGS84,Precise,Confidence,Level\n")
 
-    f_err = codecs.open("Output/Geocoding Error.csv", "w",  encoding = "utf-8-sig")
+    f_err = codecs.open("Output/Geocoding Error.csv", "w", encoding = "utf-8-sig")
     f_err.write("OBJECTID,ADDRESS\n")
 
-    for f in f_in[1:]:        
-        r = f.replace('\n', '').split(',')
-        oid = r[0]
-        address = r[1]
+    for f in f_in[1:]:
         try:
+            r = f.strip().split(',')
+            oid = r[0]
+            address = r[1]            
             geocode = Geocoding(access, city, address)
             f_out.write(str.format("{0},{1},{2}\n", oid, address, geocode))
         except:
-            f_err.write(str.format("{0},{1}\n", oid, address))
+            f_err.write(f)
             continue
                         
     f_out.close()
