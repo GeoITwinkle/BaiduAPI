@@ -53,6 +53,7 @@ def Geocode(access, city, address):
         if 'location' in r:                
             lat_bd09 = r['location']['lat']            
             lng_bd09 = r['location']['lng']
+            
             # BD09 to WGS04 conversion (region-dependent)
             lat_wgs84 = -0.0398742657492583 + 0.000368742795507935 * lng_bd09 + 0.999770842271639 * lat_bd09
             lng_wgs84 = -0.081774703936586 + 1.00062621134481 * lng_bd09 - 0.0000472322372012116 * lat_bd09

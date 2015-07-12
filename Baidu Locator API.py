@@ -55,18 +55,18 @@ def Locate(apikey, city_code, address):
     if 'content' in data:
         r = data['content'][0]
         
-        if 'ext' in r:            
-            lng_bd09mc = r['ext']['detail_info']['point']['x']
+        if 'ext' in r:
             lat_bd09mc = r['ext']['detail_info']['point']['y']
+            lng_bd09mc = r['ext']['detail_info']['point']['x']            
 
             # BD09MC to BD09
-            bd09 = BD09MCToBD09(apikey, lng_bd09mc, lat_bd09mc)
-            lng_bd09 = bd09[0]
+            bd09 = BD09MCToBD09(apikey, lng_bd09mc, lat_bd09mc)            
             lat_bd09 = bd09[1]            
+            lng_bd09 = bd09[0]
             
             # BD09 to WGS04 conversion (region-dependent)
-            lng_wgs84 = -0.081774703936586 + 1.00062621134481 * lng_bd09 - 0.0000472322372012116 * lat_bd09
-            lat_wgs84 = -0.0398742657492583 + 0.000368742795507935 * lng_bd09 + 0.999770842271639 * lat_bd09            
+            lat_wgs84 = -0.0398742657492583 + 0.000368742795507935 * lng_bd09 + 0.999770842271639 * lat_bd09
+            lng_wgs84 = -0.081774703936586 + 1.00062621134481 * lng_bd09 - 0.0000472322372012116 * lat_bd09                        
 
     return str.format("{0},{1},{2},{3},{4},{5}", lat_bd09mc, lng_bd09mc, lat_bd09, lng_bd09, lat_wgs84, lng_wgs84)
 
