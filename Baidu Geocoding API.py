@@ -29,7 +29,7 @@ def DownloadPage(url, path):
         print("Page not found")
         return
 
-def Geocoding(access, city, address):
+def Geocode(access, city, address):
     # Geocode with city identifier
     url = str.format("{0}&city={1}&address={2}&output=json", access, urllib.parse.quote(city), urllib.parse.quote(address))
     DownloadPage(url, "temp.txt")
@@ -90,7 +90,7 @@ if __name__ == '__main__':
             r = f.strip().split(',')
             oid = r[0]
             address = r[1]            
-            geocode = Geocoding(access, city, address)
+            geocode = Geocode(access, city, address)
             f_out.write(str.format("{0},{1},{2}\n", oid, address, geocode))
         except:
             f_err.write(f)
