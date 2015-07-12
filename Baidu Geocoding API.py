@@ -30,14 +30,23 @@ def DownloadPage(url, path):
         return
 
 def Geocoding(access, city, address):
+    # Geocode with city identifier
     url = str.format("{0}&city={1}&address={2}&output=json", access, urllib.parse.quote(city), urllib.parse.quote(address))
     DownloadPage(url, "temp.txt")
     f = codecs.open("temp.txt", "r", encoding = "utf-8")
     data = json.loads(f.read())
-    f.close()
+    f.close()  
 
+    # Geocode without city identifier
+    if data['status'] != 0:
+        url = str.format("{0}&address={1}&output=json", access, urllib.parse.quote(address))
+        DownloadPage(url, "temp.txt")
+        f = codecs.open("temp.txt", "r", encoding = "utf-8")
+        data = json.loads(f.read())
+        f.close()
+        
     lat_bd09 = lng_bd09 = lat_wgs84 = lng_wgs84 = precise = confidence = level = ''
-
+    
     if 'result' in data:
         r = data['result']
         
