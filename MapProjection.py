@@ -8,7 +8,8 @@
 # Acknowledgement: Code is converted and modified based on http://www.oschina.net/code/snippet_260395_39205
 # License: Academic use only
 
-import math
+import codecs, math
+from datetime import datetime
 
 PI = 3.14159265358979324
 X_PI = 3.14159265358979324 * 3000.0 / 180.0
@@ -172,8 +173,8 @@ def TransformLongitude(x, y):
     ret += (150.0 * math.sin(x / 12.0 * PI) + 300.0 * math.sin(x / 30.0 * PI)) * 2.0 / 3.0
     return ret
 
-# Test
 if __name__ == '__main__':
+    # General test
     print(str.format("{0}\t{1: >20}\t{2: >20}", "System", "Latitude", "Longitude"))
     
     wgs84 = {'lat': 23, 'lon': 113}
@@ -196,3 +197,42 @@ if __name__ == '__main__':
     
     wgs84_rev = WebMercatorToWGS84(wm['lat'], wm['lon'])
     print(str.format("WGS84\t{0: >20}\t{1: >20}", wgs84_rev['lat'], wgs84_rev['lon']))
+
+    # Precision test
+    start = datetime.now()
+    print(str.format("Precision Test ({0})", start))
+    
+    f_in = codecs.open("Input/Projection.csv", "r", encoding = "utf-8-sig").readlines()
+    f_out = codecs.open("Output/Projection Test.csv", "w", encoding = "utf-8-sig")
+    f_out.write("OBJECTID,X_WGS84,Y_WGS84,X_BD09,Y_BD09,X_WGS84_Exact,Y_WGS84_Exact,Distance_Exact,X_WGS84_Reg,Y_WGS84_Reg,Distance_Reg\n")
+
+    for r in f_in[1:]:
+        r = r.strip().split(',')
+
+        x_wgs84 = float(r[1])
+        y_wgs84 = float(r[2])
+        x_bd09 = float(r[3])
+        y_bd09 = float(r[4])
+
+        # Convert by functions
+        gcj02 = BD09ToGCJ02(y_bd09, x_bd09)
+        wgs84 = GCJ02ToWGS84_Exact(gcj02['lat'], gcj02['lon'])
+        x_wgs84_exact = float(wgs84['lon'])
+        y_wgs84_exact = float(wgs84['lat'])
+
+        # Convert by regression (Guangzhou)
+        y_wgs84_reg = -0.0398742657492583 + 0.000368742795507935 * x_bd09 + 0.999770842271639 * y_bd09
+        x_wgs84_reg = -0.081774703936586 + 1.00062621134481 * x_bd09 - 0.0000472322372012116 * y_bd09
+
+        # Calculate distance
+        d_exact = Distance(y_wgs84_exact, x_wgs84_exact, y_wgs84, x_wgs84)
+        d_reg = Distance(y_wgs84_reg, x_wgs84_reg, y_wgs84, x_wgs84)
+
+        f_out.write(str.format("{0},{1},{2},{3},{4},{5},{6}\n", ','.join(r), x_wgs84_exact, y_wgs84_exact, d_exact, x_wgs84_reg, y_wgs84_reg, d_reg))
+        
+    f_out.close()
+
+    end = datetime.now()
+    print(str.format("Completed ({0})", start))
+    print(str.format("Duration: {0}", end - start))
+
