@@ -5,7 +5,7 @@
 # Requirement: Python 3.x
 # Developer: Xiaoxing Qin@Sun Yat-sen University
 # Acknowledgement: Kejing Peng@Microsoft solved UTF-8 issues
-# License: Free for non-commercial use
+# License: Academic use only
 
 # Instruction
 # 1. Register a personal Baidu API key and replace it in main function

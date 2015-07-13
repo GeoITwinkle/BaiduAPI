@@ -5,26 +5,18 @@
 # Requirement: Python 3.x
 # Developer: Xiaoxing Qin@Sun Yat-sen University
 # Acknowledgement: Kejing Peng@Microsoft solved UTF-8 issues
-# License: Free for non-commercial use
+# License: Academic use only
 
 # Instruction
 # 1. Register a personal Baidu API key and replace it in main function
 # 2. Specify POI in main function
 # 3. Specify region and extent (lower-left and upper-right in WGS84) in main function
-# 4. Specify the limit in main function
+# 4. Specify the limit in main function (caution: number of records retrieved from Baidu Map is dynamic and scalable)
 #   (1) 20: smaller area, more data, slower speed
 #   (2) 760: larger area, less data, faster speed
-#   (3) Caution: number of records retrieved from Baidu Map is dynamic and scalable
-# 5. Specify BD09 to WGS04 conversion in GetData function
-#   (1) In ArcGIS, create a FishNet for the region with high resolution (e.g., 100m for Guangzhou)
-#   (2) Get the WGS84 coordinates of cell centroids
-#   (3) Convert coordinates from WGS84 to BD09 via Baidu Coordinate API.py
-#   (4) Open the output file in Excel, run linear regression to get B0, B1, and B2 in high precision:
-#       X_WGS84 = B0 + B1 * X_BD09 + B2 * Y_BD09
-#       Y_WGS84 = B0 + B1 * X_BD09 + B2 * Y_BD09
-# 6. Run the script
+# 5. Run the script
 
-import urllib.request, json, codecs, os
+import urllib.request, json, codecs, os, MapProjection
 from datetime import datetime
 
 # Utils function
@@ -73,10 +65,12 @@ def GetData(url):
                 lat_bd09 = r['location']['lat']            
                 lng_bd09 = r['location']['lng']
                 
-                # BD09 to WGS04 conversion (region-dependent)
-                lat_wgs84 = -0.0398742657492583 + 0.000368742795507935 * lng_bd09 + 0.999770842271639 * lat_bd09
-                lng_wgs84 = -0.081774703936586 + 1.00062621134481 * lng_bd09 - 0.0000472322372012116 * lat_bd09
-                
+                # BD09 to WGS04 conversion
+                gcj02 = MapProjection.BD09ToGCJ02(lat_bd09, lng_bd09)
+                wgs84 = MapProjection.GCJ02ToWGS84_Exact(gcj02['lat'], gcj02['lon'])
+                lat_wgs84 = wgs84['lat']
+                lng_wgs84 = wgs84['lon']
+            
             if 'address'in r:
                 address = r['address']
                 

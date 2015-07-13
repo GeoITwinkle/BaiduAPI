@@ -5,16 +5,15 @@
 # Requirement: Python 3.x
 # Developer: Xiaoxing Qin@Sun Yat-sen University
 # Acknowledgement: Kejing Peng@Microsoft solved UTF-8 issues
-# License: Free for non-commercial use
+# License: Academic use only
 
 # Instruction
 # 1. Register a personal Baidu API key and replace it in main function
 # 2. Specify city in main function
-# 3. Specify BD09 to WGS04 conversion in Geocoding function (see Baidu Place API.py)
-# 4. Format address data according to Input/Address.csv
-# 5. Run the script
+# 3. Format address data according to Input/Address.csv
+# 4. Run the script
 
-import urllib.request, json, codecs, os
+import urllib.request, json, codecs, os, MapProjection
 from datetime import datetime
 
 # Utils function
@@ -45,9 +44,11 @@ def Geocode(access, city, address):
             lat_bd09 = r['location']['lat']            
             lng_bd09 = r['location']['lng']
             
-            # BD09 to WGS04 conversion (region-dependent)
-            lat_wgs84 = -0.0398742657492583 + 0.000368742795507935 * lng_bd09 + 0.999770842271639 * lat_bd09
-            lng_wgs84 = -0.081774703936586 + 1.00062621134481 * lng_bd09 - 0.0000472322372012116 * lat_bd09
+            # BD09 to WGS04 conversion
+            gcj02 = MapProjection.BD09ToGCJ02(lat_bd09, lng_bd09)
+            wgs84 = MapProjection.GCJ02ToWGS84_Exact(gcj02['lat'], gcj02['lon'])
+            lat_wgs84 = wgs84['lat']
+            lng_wgs84 = wgs84['lon']
             
         if 'precise' in r:
             precise = r['precise']
@@ -77,6 +78,7 @@ if __name__ == '__main__':
     f_err = codecs.open("Output/Geocoding Error.csv", "w", encoding = "utf-8-sig")
     f_err.write("OBJECTID,ADDRESS\n")
 
+    err = 0
     for f in f_in[1:]:
         try:
             r = f.strip().split(',')
@@ -86,11 +88,15 @@ if __name__ == '__main__':
             f_out.write(str.format("{0},{1},{2}\n", oid, address, geocode))
         except:
             f_err.write(f)
+            err += 1
             continue
                         
     f_out.close()
     f_err.close()
     os.remove("temp.txt")
+
+    if err == 0:
+        os.remove("Output/Geocoding Error.csv")
 
     end = datetime.now()
     print(str.format("Completed ({0})", end))
