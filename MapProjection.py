@@ -13,7 +13,7 @@ import math
 PI = 3.14159265358979324
 X_PI = 3.14159265358979324 * 3000.0 / 180.0
 
-def delta(lat, lon):
+def Delta(lat, lon):
     # Krasovsky 1940
     # a = 6378245.0
     # 1/f = 298.3 (卫星椭球坐标投影到平面地图坐标系的投影因子)
@@ -38,7 +38,7 @@ def WGS84ToGCJ02(wgsLat, wgsLon):
     if OutOfChina(wgsLat, wgsLon):
         return {'lat': wgsLat, 'lon': wgsLon}
 
-    d = delta(wgsLat, wgsLon)
+    d = Delta(wgsLat, wgsLon)
     return {'lat': wgsLat + d['lat'], 'lon': wgsLon + d['lon']}
 
 # GCJ-02 to WGS-84 Estimate
@@ -46,7 +46,7 @@ def GCJ02ToWGS84_Estimate(gcjLat, gcjLon):
     if OutOfChina(gcjLat, gcjLon):
         return {'lat': gcjLat, 'lon': gcjLon}
      
-    d = delta(gcjLat, gcjLon)
+    d = Delta(gcjLat, gcjLon)
     return {'lat': gcjLat - d['lat'], 'lon': gcjLon - d['lon']}
 
 # GCJ-02 to WGS-84 Binary Limit
@@ -107,7 +107,7 @@ def BD09ToGCJ02(bdLat, bdLon):
     gcjLat = z * math.sin(theta)
     return {'lat': gcjLat, 'lon': gcjLon}
 
-# WGS-84 to Web mercator
+# WGS-84 to Web Mercator
 def WGS84ToWebMercator(wgsLat, wgsLon):
     x = wgsLon * 20037508.34 / 180.0
     y = math.log(math.tan((90.0 + wgsLat) * PI / 360.0)) / (PI / 180.0)
@@ -121,7 +121,7 @@ def WGS84ToWebMercator(wgsLat, wgsLon):
     # y = 3189068.5 * math.log((1.0 + math.sin(a)) / (1.0 - math.sin(a)))
     # return {'lat': y, 'lon': x}
 
-# Web mercator to WGS-84
+# Web Mercator to WGS-84
 def WebMercatorToWGS84(mercatorLat, mercatorLon):
     x = mercatorLon / 20037508.34 * 180.0
     y = mercatorLat / 20037508.34 * 180.0
