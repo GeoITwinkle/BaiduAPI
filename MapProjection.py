@@ -153,7 +153,7 @@ def Distance(latA, lonA, latB, lonB):
     return distance
 
 def OutOfChina(lat, lon):
-    return not (72.004 < lon < 137.8347 and 0.8293 < lat < 55.8271)
+    return not (72.004 <= lon <= 137.8347 and 0.8293 <= lat <= 55.8271)
 
 def TransformLatitude(x, y):
     ret = -100.0 + 2.0 * x + 3.0 * y + 0.2 * y * y + 0.1 * x * y + 0.2 * math.sqrt(abs(x))
