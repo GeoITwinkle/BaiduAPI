@@ -38,24 +38,23 @@ def Delta(lat, lon):
 def WGS84ToGCJ02(wgsLat, wgsLon):
     if OutOfChina(wgsLat, wgsLon):
         return {'lat': wgsLat, 'lon': wgsLon}
-
-    d = Delta(wgsLat, wgsLon)
-    return {'lat': wgsLat + d['lat'], 'lon': wgsLon + d['lon']}
+    else:
+        d = Delta(wgsLat, wgsLon)
+        return {'lat': wgsLat + d['lat'], 'lon': wgsLon + d['lon']}
 
 # GCJ-02 to WGS-84 Estimate
 def GCJ02ToWGS84_Estimate(gcjLat, gcjLon):
     if OutOfChina(gcjLat, gcjLon):
         return {'lat': gcjLat, 'lon': gcjLon}
-     
-    d = Delta(gcjLat, gcjLon)
-    return {'lat': gcjLat - d['lat'], 'lon': gcjLon - d['lon']}
+    else:
+        d = Delta(gcjLat, gcjLon)
+        return {'lat': gcjLat - d['lat'], 'lon': gcjLon - d['lon']}
 
 # GCJ-02 to WGS-84 Binary Limit
 def GCJ02ToWGS84_Exact(gcjLat, gcjLon):
     initDelta = 0.01
     threshold = 0.000000001
-    dLat = initDelta
-    dLon = initDelta
+    dLat = dLon = initDelta
     mLat = gcjLat - dLat
     mLon = gcjLon - dLon
     pLat = gcjLat + dLat
@@ -202,19 +201,15 @@ if __name__ == '__main__':
     f_out = codecs.open("Output/Projection Test.csv", "w", encoding = "utf-8-sig")
     f_out.write("OBJECTID,X_WGS84,Y_WGS84,X_BD09,Y_BD09,X_WGS84_Exact,Y_WGS84_Exact,Distance_Exact,X_WGS84_Reg,Y_WGS84_Reg,Distance_Reg\n")
 
-    for r in f_in[1:]:
-        r = r.strip().split(',')
-
-        x_wgs84 = float(r[1])
-        y_wgs84 = float(r[2])
-        x_bd09 = float(r[3])
-        y_bd09 = float(r[4])
+    for f in f_in[1:]:
+        r = f.strip().split(',')
+        [x_wgs84, y_wgs84, x_bd09, y_bd09] = map(lambda x: float(x), r[1:5])
 
         # Convert by functions
         gcj02 = BD09ToGCJ02(y_bd09, x_bd09)
         wgs84 = GCJ02ToWGS84_Exact(gcj02['lat'], gcj02['lon'])
-        x_wgs84_exact = float(wgs84['lon'])
-        y_wgs84_exact = float(wgs84['lat'])
+        x_wgs84_exact = wgs84['lon']
+        y_wgs84_exact = wgs84['lat']
 
         # Convert by regression (Guangzhou)
         y_wgs84_reg = -0.0398742657492583 + 0.000368742795507935 * x_bd09 + 0.999770842271639 * y_bd09
@@ -231,4 +226,3 @@ if __name__ == '__main__':
     end = datetime.now()
     print(str.format("Completed ({0})", start))
     print(str.format("Duration: {0}", end - start))
-

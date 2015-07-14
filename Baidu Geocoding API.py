@@ -82,8 +82,7 @@ if __name__ == '__main__':
     for f in f_in[1:]:
         try:
             r = f.strip().split(',')
-            oid = r[0]
-            address = r[1]            
+            [oid, address] = r[:2]            
             geocode = Geocode(access, city, address)
             f_out.write(str.format("{0},{1},{2}\n", oid, address, geocode))
         except:

@@ -34,25 +34,25 @@ if __name__ == '__main__':
     start = datetime.now()
     print(str.format("Converting WGS84 to BD09. ({0})", start))
     
-    wgs = codecs.open("Input/WGS84.csv", "r", encoding = "utf-8-sig").readlines()
-    bd = codecs.open("Output/BD09.csv", "w", encoding = "utf-8-sig")    
-    bd.write("OBJECTID,X_WGS84,Y_WGS84,X_BD09,Y_BD09\n")
+    f_wgs = codecs.open("Input/WGS84.csv", "r", encoding = "utf-8-sig").readlines()
+    f_bd = codecs.open("Output/BD09.csv", "w", encoding = "utf-8-sig")    
+    f_bd.write("OBJECTID,X_WGS84,Y_WGS84,X_BD09,Y_BD09\n")
 
     i = oid = 0
     wgs84 = []
-    for r in wgs[1:]:
+    for f in f_wgs[1:]:
         i += 1
-        s = r.strip().split(',')
-        wgs84.append(','.join(s[1:]))
+        r = f.strip().split(',')
+        wgs84.append(','.join(r[1:]))
         
-        if i % 100 == 0 or i == len(wgs) - 1:           
+        if i % 100 == 0 or i == len(f_wgs) - 1:           
             bd09 = WGS84ToBD09(apikey, ';'.join(wgs84))       
             for j in range(0, len(bd09)):
                 oid += 1
-                bd.write(str.format("{0},{1},{2}\n", oid, wgs84[j], bd09[j]))
+                f_bd.write(str.format("{0},{1},{2}\n", oid, wgs84[j], bd09[j]))
             wgs84 = []
 
-    bd.close()
+    f_bd.close()
     
     end = datetime.now()
     print(str.format("Completed. ({0})", end))
