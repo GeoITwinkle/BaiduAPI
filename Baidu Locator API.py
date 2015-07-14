@@ -60,7 +60,7 @@ def Locate(apikey, city_code, address):
 
             # BD09MC to BD09
             bd09 = BD09MCToBD09(apikey, lng_bd09mc, lat_bd09mc)       
-            [lng_bd09, lat_bd09] = bd09[:2]
+            [lng_bd09, lat_bd09] = bd09
             
             # BD09 to WGS04 conversion
             gcj02 = MapProjection.BD09ToGCJ02(lat_bd09, lng_bd09)
@@ -90,8 +90,7 @@ if __name__ == '__main__':
     err = 0
     for f in f_in[1:]:
         try:
-            r = f.strip().split(',')
-            [oid, address] = r[:2]            
+            [oid, address] = f.strip().split(',')            
             location = Locate(apikey, city_code, address)
             f_out.write(str.format("{0},{1},{2}\n", oid, address, location))
         except:

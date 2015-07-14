@@ -59,9 +59,9 @@ def GCJ02ToWGS84_Exact(gcjLat, gcjLon):
     mLon = gcjLon - dLon
     pLat = gcjLat + dLat
     pLon = gcjLon + dLon
-    wgsLat = wgsLon = i = 0
+    wgsLat = wgsLon = 0
     
-    while (1):
+    for i in range(1, 10001):
         wgsLat = (mLat + pLat) / 2
         wgsLon = (mLon + pLon) / 2
         tmp = WGS84ToGCJ02(wgsLat, wgsLon)
@@ -80,10 +80,6 @@ def GCJ02ToWGS84_Exact(gcjLat, gcjLon):
             pLon = wgsLon
         else:
             mLon = wgsLon
-        
-        i += 1
-        if i > 10000:
-            break
 
     return {'lat': wgsLat, 'lon': wgsLon}
 
