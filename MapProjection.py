@@ -12,7 +12,7 @@ import codecs, math
 from datetime import datetime
 
 PI = 3.14159265358979324
-X_PI = 3.14159265358979324 * 3000.0 / 180.0
+X_PI = PI * 3000.0 / 180.0
 
 def Delta(lat, lon):
     # Krasovsky 1940
