@@ -94,7 +94,7 @@ if __name__ == '__main__':
             location = Locate(apikey, city_code, address)
             f_out.write(str.format("{0},{1},{2}\n", oid, address, location))
         except:
-            f_err.write(f + "\n")
+            f_err.write(f)
             err += 1
             continue
                         
