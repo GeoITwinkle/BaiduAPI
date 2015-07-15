@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# POI Data Decoder for Baidu Map
+# POI Collector for Baidu Map
 
 # Requirement: Python 3.x
 # Developer: Xiaoxing Qin@Sun Yat-sen University
@@ -45,7 +45,7 @@ def WGS84ToBD09(apikey, extent):
     return bd09
 
 # Get POI data
-def GetData(url):
+def GetPOI(url):
     DownloadPage(url, "temp.txt")
     f = codecs.open("temp.txt", "r", encoding = "utf-8")  
     data = json.loads(f.read())
@@ -88,7 +88,7 @@ def GetData(url):
     return rs
 
 # Search for POI by extent
-def SearchByExtent(access, poi, extent, limit):
+def SearchPOI(access, poi, extent, limit):
     [x1, y1, x2, y2] = extent
     url = str.format("{0}&query={1}&bounds={2},{3},{4},{5}&output=json&page_size=20", access, urllib.parse.quote(poi), y1, x1, y2, x2)
 
@@ -105,13 +105,13 @@ def SearchByExtent(access, poi, extent, limit):
     elif total <= limit:
         for i in range(0, int((total - 1) / 20) + 1):
             curr_url = str.format("{0}&page_num={1}", url, i)
-            r = r + GetData(curr_url)
+            r = r + GetPOI(curr_url)
     else:        
         ext_ne = [(x1 + x2) / 2, (y1 + y2) / 2, x2, y2]
         ext_nw = [x1, (y1 + y2) / 2, (x1 + x2) / 2, y2]
         ext_sw = [x1, y1, (x1 + x2) / 2, (y1 + y2) / 2]
         ext_se = [(x1 + x2) / 2, y1, x2, (y1 + y2) / 2]
-        r = SearchByExtent(access, poi, ext_ne, limit) + SearchByExtent(access, poi, ext_nw, limit) + SearchByExtent(access, poi, ext_sw, limit) + SearchByExtent(access, poi, ext_se, limit)
+        r = SearchPOI(access, poi, ext_ne, limit) + SearchPOI(access, poi, ext_nw, limit) + SearchPOI(access, poi, ext_sw, limit) + SearchPOI(access, poi, ext_se, limit)
 
     return r
 
@@ -137,7 +137,7 @@ if __name__ == '__main__':
         fname = str.format("Output/{0}_{1}.csv", region, p)
         f = codecs.open(fname, "w",  encoding = "utf-8-sig")
         f.write("UID,Name,Latitude_BD09,Longitude_BD09,Latitude_WGS84,Longitude_WGS84,Address,Telephone,Tag\n")        
-        f.write(SearchByExtent(access, p, ext_bd09, limit))
+        f.write(SearchPOI(access, p, ext_bd09, limit))
         f.close()
         os.remove("temp.txt")
 
