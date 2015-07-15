@@ -85,7 +85,7 @@ if __name__ == '__main__':
             geocode = Geocode(access, city, address)
             f_out.write(str.format("{0},{1},{2}\n", oid, address, geocode))
         except:
-            f_err.write(f)
+            f_err.write(f + "\n")
             err += 1
             continue
                         
