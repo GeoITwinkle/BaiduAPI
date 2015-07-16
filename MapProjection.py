@@ -164,65 +164,73 @@ def TransformLongitude(x, y):
     ret += (150.0 * math.sin(x / 12.0 * PI) + 300.0 * math.sin(x / 30.0 * PI)) * 2.0 / 3.0
     return ret
 
-if __name__ == '__main__':
-    # General test
-    print("========== General Test ==========")
-    
-    print(str.format("{0}\t{1: >20}\t{2: >20}", "System", "Latitude", "Longitude"))
-    
-    wgs84 = {'lat': 23, 'lon': 113}
-    print(str.format("WGS84\t{0: >20}\t{1: >20}", wgs84['lat'], wgs84['lon']))
-    
-    gcj02 = WGS84ToGCJ02(wgs84['lat'], wgs84['lon'])
-    print(str.format("GCJ02\t{0: >20}\t{1: >20}", gcj02['lat'], gcj02['lon']))
-    
-    bd09 = GCJ02ToBD09(gcj02['lat'], gcj02['lon'])
-    print(str.format("BD09\t{0: >20}\t{1: >20}", bd09['lat'], bd09['lon']))
+class Test:
+    def __init__(self):
+        # General test
+        print("========== General Test ==========")
+        self.__GeneralTest()
 
-    gcj02_rev = BD09ToGCJ02(bd09['lat'], bd09['lon'])
-    print(str.format("GCJ02\t{0: >20}\t{1: >20}", gcj02_rev['lat'], gcj02_rev['lon']))
-    
-    wgs84_rev = GCJ02ToWGS84_Exact(gcj02_rev['lat'], gcj02_rev['lon'])
-    print(str.format("WGS84\t{0: >20}\t{1: >20}", wgs84_rev['lat'], wgs84_rev['lon']))
-
-    wm = WGS84ToWebMercator(wgs84['lat'], wgs84['lon'])
-    print(str.format("WebMc\t{0: >20}\t{1: >20}", wm['lat'], wm['lon']))
-    
-    wgs84_rev = WebMercatorToWGS84(wm['lat'], wm['lon'])
-    print(str.format("WGS84\t{0: >20}\t{1: >20}", wgs84_rev['lat'], wgs84_rev['lon']))
-
-    # Precision test
-    print("========== Precision Test ==========")
-    
-    start = datetime.now()
-    print(str.format("Testing ({0})", start))
-    
-    f_in = codecs.open("Input/Projection.csv", "r", encoding = "utf-8-sig")
-    f_out = codecs.open("Output/Projection Test.csv", "w", encoding = "utf-8-sig")
-    f_out.write("OBJECTID,X_WGS84,Y_WGS84,X_BD09,Y_BD09,X_WGS84_Exact,Y_WGS84_Exact,Distance_Exact,X_WGS84_Reg,Y_WGS84_Reg,Distance_Reg\n")
-
-    for f in f_in.readlines()[1:]:
-        r = f.strip().split(',')
-        [x_wgs84, y_wgs84, x_bd09, y_bd09] = map(lambda x: float(x), r[1:5])
-
-        # Convert by functions
-        gcj02 = BD09ToGCJ02(y_bd09, x_bd09)
-        wgs84 = GCJ02ToWGS84_Exact(gcj02['lat'], gcj02['lon'])
-        x_wgs84_exact = wgs84['lon']
-        y_wgs84_exact = wgs84['lat']
-
-        # Convert by regression (Guangzhou)
-        y_wgs84_reg = -0.0398742657492583 + 0.000368742795507935 * x_bd09 + 0.999770842271639 * y_bd09
-        x_wgs84_reg = -0.081774703936586 + 1.00062621134481 * x_bd09 - 0.0000472322372012116 * y_bd09
-
-        # Calculate distance
-        d_exact = Distance(y_wgs84_exact, x_wgs84_exact, y_wgs84, x_wgs84)
-        d_reg = Distance(y_wgs84_reg, x_wgs84_reg, y_wgs84, x_wgs84)
-
-        f_out.write(str.format("{0},{1},{2},{3},{4},{5},{6}\n", ','.join(r), x_wgs84_exact, y_wgs84_exact, d_exact, x_wgs84_reg, y_wgs84_reg, d_reg))
+        # Precision test
+        print("========== Precision Test ==========")
+        self.__PrecisionTest()
         
-    f_out.close()
+    def __GeneralTest(self):
+        print(str.format("{0}\t{1: >20}\t{2: >20}", "System", "Latitude", "Longitude"))
+        
+        wgs84 = {'lat': 23, 'lon': 113}
+        print(str.format("WGS84\t{0: >20}\t{1: >20}", wgs84['lat'], wgs84['lon']))
+        
+        gcj02 = WGS84ToGCJ02(wgs84['lat'], wgs84['lon'])
+        print(str.format("GCJ02\t{0: >20}\t{1: >20}", gcj02['lat'], gcj02['lon']))
+        
+        bd09 = GCJ02ToBD09(gcj02['lat'], gcj02['lon'])
+        print(str.format("BD09\t{0: >20}\t{1: >20}", bd09['lat'], bd09['lon']))
 
-    end = datetime.now()
-    print(str.format("Completed ({0})", start))
-    print(str.format("Duration: {0}", end - start))
+        gcj02_rev = BD09ToGCJ02(bd09['lat'], bd09['lon'])
+        print(str.format("GCJ02\t{0: >20}\t{1: >20}", gcj02_rev['lat'], gcj02_rev['lon']))
+        
+        wgs84_rev = GCJ02ToWGS84_Exact(gcj02_rev['lat'], gcj02_rev['lon'])
+        print(str.format("WGS84\t{0: >20}\t{1: >20}", wgs84_rev['lat'], wgs84_rev['lon']))
+
+        wm = WGS84ToWebMercator(wgs84['lat'], wgs84['lon'])
+        print(str.format("WebMc\t{0: >20}\t{1: >20}", wm['lat'], wm['lon']))
+        
+        wgs84_rev = WebMercatorToWGS84(wm['lat'], wm['lon'])
+        print(str.format("WGS84\t{0: >20}\t{1: >20}", wgs84_rev['lat'], wgs84_rev['lon']))
+
+    def __PrecisionTest(self):
+        start = datetime.now()
+        print(str.format("Testing ({0})", start))
+        
+        f_in = codecs.open("Input/Projection.csv", "r", encoding = "utf-8-sig")
+        f_out = codecs.open("Output/Projection Test.csv", "w", encoding = "utf-8-sig")
+        f_out.write("OBJECTID,X_WGS84,Y_WGS84,X_BD09,Y_BD09,X_WGS84_Exact,Y_WGS84_Exact,Distance_Exact,X_WGS84_Reg,Y_WGS84_Reg,Distance_Reg\n")
+
+        for f in f_in.readlines()[1:]:
+            r = f.strip().split(',')
+            [x_wgs84, y_wgs84, x_bd09, y_bd09] = map(lambda x: float(x), r[1:5])
+
+            # Convert by functions
+            gcj02 = BD09ToGCJ02(y_bd09, x_bd09)
+            wgs84 = GCJ02ToWGS84_Exact(gcj02['lat'], gcj02['lon'])
+            x_wgs84_exact = wgs84['lon']
+            y_wgs84_exact = wgs84['lat']
+
+            # Convert by regression (Guangzhou)
+            y_wgs84_reg = -0.0398742657492583 + 0.000368742795507935 * x_bd09 + 0.999770842271639 * y_bd09
+            x_wgs84_reg = -0.081774703936586 + 1.00062621134481 * x_bd09 - 0.0000472322372012116 * y_bd09
+
+            # Calculate distance
+            d_exact = Distance(y_wgs84_exact, x_wgs84_exact, y_wgs84, x_wgs84)
+            d_reg = Distance(y_wgs84_reg, x_wgs84_reg, y_wgs84, x_wgs84)
+
+            f_out.write(str.format("{0},{1},{2},{3},{4},{5},{6}\n", ','.join(r), x_wgs84_exact, y_wgs84_exact, d_exact, x_wgs84_reg, y_wgs84_reg, d_reg))
+            
+        f_out.close()
+
+        end = datetime.now()
+        print(str.format("Completed ({0})", start))
+        print(str.format("Duration: {0}", end - start))    
+
+if __name__ == '__main__':
+    test = Test()

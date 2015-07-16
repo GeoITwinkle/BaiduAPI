@@ -23,7 +23,7 @@ def DownloadPage(url, path):
         return
 
 def Geocode(access, city, address):
-    url = str.format("{0}&city={1}&address={2}&output=json", access, urllib.parse.quote(city), urllib.parse.quote(address))
+    url = str.format("{0}&output=json&city={1}&address={2}", access, urllib.parse.quote(city), urllib.parse.quote(address))
     DownloadPage(url, "temp.txt")
     f = codecs.open("temp.txt", "r", encoding = "utf-8")
     data = json.loads(f.read())
@@ -55,30 +55,7 @@ def Geocode(access, city, address):
 
     return str.format("{0},{1},{2},{3},{4},{5},{6}", lat_bd09, lng_bd09, lat_wgs84, lng_wgs84, precise, confidence, level)
 
-if __name__ == '__main__':
-    # Configuration
-    print("========== Configuration ==========")
-    
-    f_key = codecs.open("Config/API Key.csv", "r", encoding = "utf-8-sig")
-    apikey = f_key.readlines()[1].strip().split(',')[1]
-    f_key.close()
-    
-    access = "http://api.map.baidu.com/geocoder/v2/?ak=" + apikey
-
-    cities = {}
-    f_city = codecs.open("Config/City.csv", "r", encoding = "utf-8-sig")
-    for f in f_city.readlines()[1:]:
-        r = f.strip().split(',')
-        cities[r[1]] = r[2]
-    
-    city = input("City: ")
-    if city not in cities:
-        print("Invalid city.")
-        sys.exit(1)    
-
-    # Geocode address
-    print("========== Process ==========")
-    
+def Process(apikey, city):
     start = datetime.now()
     print(str.format("Geocoding address in {0} ({1})", city, start))
 
@@ -110,4 +87,29 @@ if __name__ == '__main__':
 
     end = datetime.now()
     print(str.format("Completed ({0})", end))
-    print(str.format("Duration: {0}", end - start))
+    print(str.format("Duration: {0}", end - start))    
+
+if __name__ == '__main__':
+    # Configuration
+    print("========== Configuration ==========")
+    
+    f_key = codecs.open("Config/API Key.csv", "r", encoding = "utf-8-sig")
+    apikey = f_key.readlines()[1].strip().split(',')[1]
+    f_key.close()
+    
+    access = "http://api.map.baidu.com/geocoder/v2/?ak=" + apikey
+
+    cities = {}
+    f_city = codecs.open("Config/City.csv", "r", encoding = "utf-8-sig")
+    for f in f_city.readlines()[1:]:
+        r = f.strip().split(',')
+        cities[r[1]] = r[2]
+    
+    city = input("City: ")
+    if city not in cities:
+        print("Invalid city.")
+        sys.exit(1)    
+
+    # Geocode address
+    print("========== Process ==========")
+    Process(apikey, city)

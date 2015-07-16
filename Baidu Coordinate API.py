@@ -10,7 +10,8 @@
 import urllib.request, json, codecs, os, sys, traceback, MapProjection
 from datetime import datetime
 
-def Convert(apikey, f_in, f_out, ocs_id, pcs_id):
+# Convert to B009 (Degree or Meter)
+def ConvertToBD09(apikey, f_in, f_out, ocs_id, pcs_id):
     i = oid = 0
     oc = []
 
@@ -35,7 +36,64 @@ def Convert(apikey, f_in, f_out, ocs_id, pcs_id):
 
     f_in.close()
     f_out.close()
+
+# Convert coordinates
+def Process(apikey, cs, ocs_id, pcs_id):
+    try:
+        start = datetime.now()
+        print(str.format("Converting {0} to {1} ({2})", cs[ocs_id], cs[pcs_id], start))
+
+        f_in = codecs.open("Input/Origin Coordinate.csv", "r", encoding = "utf-8-sig")
+        f_out = codecs.open("Output/Temp.csv", "w", encoding = "utf-8-sig")    
+        f_out.write("OBJECTID,X_Origin,Y_Origin,X_Projected,Y_Projected\n")
     
+        if pcs_id in ["5", "6"]:
+            ConvertToBD09(apikey, f_in, f_out, ocs_id, pcs_id)
+
+            if os.path.exists("Output/Projected Coordinate.csv"):
+                os.remove("Output/Projected Coordinate.csv")
+
+            os.rename("Output/Temp.csv", "Output/Projected Coordinate.csv")
+        elif pcs_id in ["1", "3"]:
+            fl = None
+            f_out_new = codecs.open("Output/Projected Coordinate.csv", "w", encoding = "utf-8-sig")    
+            f_out_new.write("OBJECTID,X_Origin,Y_Origin,X_Projected,Y_Projected\n")        
+
+            if ocs_id == "5":
+                fl = f_in.readlines()
+                f_out.close()
+            else:
+                ConvertToBD09(apikey, f_in, f_out, ocs_id, 5)
+                f_in_new = codecs.open("Output/Temp.csv", "r", encoding = "utf-8-sig")
+                fl = f_in_new.readlines()
+
+            for f in fl[1:]:            
+                r = f.strip().split(',')
+                [x_bd09, y_bd09] = map(lambda x: float(x), r[1:3] if ocs_id == "5" else r[3:])           
+                gcj02 = MapProjection.BD09ToGCJ02(y_bd09, x_bd09)
+                
+                x = y = 0
+                if pcs_id == "1":                
+                    wgs84 = MapProjection.GCJ02ToWGS84_Exact(gcj02['lat'], gcj02['lon'])
+                    x = wgs84['lon']
+                    y = wgs84['lat']                
+                else:
+                    x = gcj02['lon']
+                    y = gcj02['lat']
+                f_out_new.write(str.format("{0},{1},{2}\n", ','.join(r[:3]), x, y))
+                
+            os.remove("Output/Temp.csv")
+        else:
+            raise Exception
+        
+        end = datetime.now()
+        print(str.format("Completed ({0})", end))
+        print(str.format("Duration: {0}", end - start))
+
+    except:
+        msg = traceback.format_exc()
+        print("Error:\n" + msg)
+        
 if __name__ == '__main__':
     # Configuration
     print("========== Configuration ==========")
@@ -73,63 +131,9 @@ if __name__ == '__main__':
         sys.exit(1)
 
     if ocs_id == pcs_id:
-        print("Input and output coordinate systems are the same.")
+        print("Same input and output coordinate systems.")
         sys.exit(1)
     
     # Convert coordinates
     print("========== Process ==========")
-    
-    try:
-        start = datetime.now()
-        print(str.format("Converting {0} to {1}. ({2})", cs[ocs_id], cs[pcs_id], start))
-
-        f_in = codecs.open("Input/Origin Coordinate.csv", "r", encoding = "utf-8-sig")
-        f_out = codecs.open("Output/Temp.csv", "w", encoding = "utf-8-sig")    
-        f_out.write("OBJECTID,X_Origin,Y_Origin,X_Projected,Y_Projected\n")
-    
-        if pcs_id in ["5", "6"]:
-            Convert(apikey, f_in, f_out, ocs_id, pcs_id)
-
-            if os.path.exists("Output/Projected Coordinate.csv"):
-                os.remove("Output/Projected Coordinate.csv")
-
-            os.rename("Output/Temp.csv", "Output/Projected Coordinate.csv")
-        elif pcs_id in ["1", "3"]:
-            fl = None
-            f_out_new = codecs.open("Output/Projected Coordinate.csv", "w", encoding = "utf-8-sig")    
-            f_out_new.write("OBJECTID,X_Origin,Y_Origin,X_Projected,Y_Projected\n")        
-
-            if ocs_id == "5":
-                fl = f_in.readlines()
-                f_out.close()
-            else:
-                Convert(apikey, f_in, f_out, ocs_id, 5)
-                f_in_new = codecs.open("Output/Temp.csv", "r", encoding = "utf-8-sig")
-                fl = f_in_new.readlines()
-
-            for f in fl[1:]:            
-                r = f.strip().split(',')
-                [x_bd09, y_bd09] = map(lambda x: float(x), r[1:3] if ocs_id == "5" else r[3:])           
-                gcj02 = MapProjection.BD09ToGCJ02(y_bd09, x_bd09)
-                
-                x = y = 0
-                if pcs_id == "1":                
-                    wgs84 = MapProjection.GCJ02ToWGS84_Exact(gcj02['lat'], gcj02['lon'])
-                    x = wgs84['lon']
-                    y = wgs84['lat']                
-                else:
-                    x = gcj02['lon']
-                    y = gcj02['lat']
-                f_out_new.write(str.format("{0},{1},{2}\n", ','.join(r[:3]), x, y))
-                
-            os.remove("Output/Temp.csv")
-        else:
-            raise Exception
-        
-        end = datetime.now()
-        print(str.format("Completed. ({0})", end))
-        print(str.format("Duration: {0}", end - start))
-
-    except:
-        msg = traceback.format_exc()
-        print("Error:\n" + msg)        
+    Process(apikey, cs, ocs_id, pcs_id) 

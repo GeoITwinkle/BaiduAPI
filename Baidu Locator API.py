@@ -64,30 +64,7 @@ def Locate(apikey, city_code, address):
 
     return str.format("{0},{1},{2},{3},{4},{5}", lat_bd09mc, lng_bd09mc, lat_bd09, lng_bd09, lat_wgs84, lng_wgs84)
 
-if __name__ == '__main__':
-    # Configuration
-    print("========== Configuration ==========")
-    
-    f_key = codecs.open("Config/API Key.csv", "r", encoding = "utf-8-sig")
-    apikey = f_key.readlines()[1].strip().split(',')[1]
-    f_key.close()
-
-    cities = {}
-    f_city = codecs.open("Config/City.csv", "r", encoding = "utf-8-sig")
-    for f in f_city.readlines()[1:]:
-        r = f.strip().split(',')
-        cities[r[1]] = r[2]   
-
-    city = input("City: ")
-    if city not in cities:
-        print("Invalid city.")
-        sys.exit(1)
-    else:
-        city_code = cities[city]
-
-    # Geocode address
-    print("========== Process ==========")
-    
+def Process(apikey, city, city_code):
     start = datetime.now()
     print(str.format("Locating address in {0} ({1})", city, start))
 
@@ -120,3 +97,28 @@ if __name__ == '__main__':
     end = datetime.now()
     print(str.format("Completed ({0})", end))
     print(str.format("Duration: {0}", end - start))
+    
+if __name__ == '__main__':
+    # Configuration
+    print("========== Configuration ==========")
+    
+    f_key = codecs.open("Config/API Key.csv", "r", encoding = "utf-8-sig")
+    apikey = f_key.readlines()[1].strip().split(',')[1]
+    f_key.close()
+
+    cities = {}
+    f_city = codecs.open("Config/City.csv", "r", encoding = "utf-8-sig")
+    for f in f_city.readlines()[1:]:
+        r = f.strip().split(',')
+        cities[r[1]] = r[2]   
+
+    city = input("City: ")
+    if city not in cities:
+        print("Invalid city.")
+        sys.exit(1)
+    else:
+        city_code = cities[city]
+
+    # Locate address
+    print("========== Process ==========")
+    Process(apikey, city, city_code)

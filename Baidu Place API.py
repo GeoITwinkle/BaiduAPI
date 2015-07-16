@@ -35,8 +35,8 @@ def WGS84ToBD09(apikey, extent):
 
     return bd09
 
-# Get POI data
-def GetPOI(url):
+# Load POI data
+def LoadPOI(url):
     DownloadPage(url, "temp.txt")
     f = codecs.open("temp.txt", "r", encoding = "utf-8")  
     data = json.loads(f.read())
@@ -81,7 +81,7 @@ def GetPOI(url):
 # Search for POI by extent
 def SearchPOI(access, poi, extent, limit):
     [x1, y1, x2, y2] = extent
-    url = str.format("{0}&query={1}&bounds={2},{3},{4},{5}&output=json&page_size=20", access, urllib.parse.quote(poi), y1, x1, y2, x2)
+    url = str.format("{0}&output=json&query={1}&bounds={2},{3},{4},{5}&page_size=20", access, urllib.parse.quote(poi), y1, x1, y2, x2)
 
     # Get the number of records in extent    
     data = json.loads(urllib.request.urlopen(url).read().decode("utf-8"))   
@@ -96,7 +96,7 @@ def SearchPOI(access, poi, extent, limit):
     elif total <= limit:
         for i in range(0, int((total - 1) / 20) + 1):
             curr_url = str.format("{0}&page_num={1}", url, i)
-            r = r + GetPOI(curr_url)
+            r = r + LoadPOI(curr_url)
     else:        
         ext_ne = [(x1 + x2) / 2, (y1 + y2) / 2, x2, y2]
         ext_nw = [x1, (y1 + y2) / 2, (x1 + x2) / 2, y2]
@@ -106,6 +106,27 @@ def SearchPOI(access, poi, extent, limit):
 
     return r
 
+# Retrieve POI data
+def Process(apikey, poi, city, extent):
+    for  p in poi:
+        start = datetime.now()
+        print(str.format("Retrieving POI data of {0} in {1} {2}", p, city, start))
+        
+        # Convert extent from WGS84 to BD09
+        ext_bd09 = WGS84ToBD09(apikey, extent)            
+        
+        # Retrieve data
+        fname = str.format("Output/{0}_{1}.csv", city, p)
+        f = codecs.open(fname, "w",  encoding = "utf-8-sig")
+        f.write("UID,Name,Latitude_BD09,Longitude_BD09,Latitude_WGS84,Longitude_WGS84,Address,Telephone,Tag\n")        
+        f.write(SearchPOI(access, p, ext_bd09, limit))
+        f.close()
+        os.remove("temp.txt")
+
+        end = datetime.now()
+        print(str.format("Completed ({0})", end))
+        print(str.format("Duration: {0}", end - start))
+    
 if __name__ == '__main__':
     # Configuration
     print("========== Configuration ==========")
@@ -149,22 +170,4 @@ if __name__ == '__main__':
 
     # Get POI data
     print("========== Process ==========")
-    
-    for  p in poi:
-        start = datetime.now()
-        print(str.format("Retrieving POI data of {0} in {1} {2}", p, city, start))
-        
-        # Convert extent from WGS84 to BD09
-        ext_bd09 = WGS84ToBD09(apikey, extent)            
-        
-        # Retrieve data
-        fname = str.format("Output/{0}_{1}.csv", city, p)
-        f = codecs.open(fname, "w",  encoding = "utf-8-sig")
-        f.write("UID,Name,Latitude_BD09,Longitude_BD09,Latitude_WGS84,Longitude_WGS84,Address,Telephone,Tag\n")        
-        f.write(SearchPOI(access, p, ext_bd09, limit))
-        f.close()
-        os.remove("temp.txt")
-
-        end = datetime.now()
-        print(str.format("Completed ({0})", end))
-        print(str.format("Duration: {0}", end - start))
+    Process(apikey, poi, city, extent)
