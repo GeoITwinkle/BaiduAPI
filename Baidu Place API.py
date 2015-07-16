@@ -7,16 +7,7 @@
 # Acknowledgement: Kejing Peng@Microsoft solved UTF-8 issues
 # License: Academic use only
 
-# Instruction
-# 1. Register a personal Baidu API key and replace it in main function
-# 2. Specify POI in main function
-# 3. Specify region and extent (lower-left and upper-right in WGS84) in main function
-# 4. Specify the limit in main function (caution: number of records retrieved from Baidu Map is dynamic and scalable)
-#   (1) 20: smaller area, more data, slower speed
-#   (2) 760: larger area, less data, faster speed
-# 5. Run the script
-
-import urllib.request, json, codecs, os, MapProjection
+import urllib.request, json, codecs, os, sys, MapProjection
 from datetime import datetime
 
 # Utils function
@@ -34,7 +25,7 @@ def DownloadPage(url, path):
 # Convert WGS84 to BD09
 def WGS84ToBD09(apikey, extent):
     coords = str.format("{0},{1};{2},{3}", extent[0], extent[1], extent[2], extent[3])
-    url = str.format("http://api.map.baidu.com/geoconv/v1/?&ak={0}&coords={1}&from=1&to=5", apikey, coords)
+    url = str.format("http://api.map.baidu.com/geoconv/v1/?&ak={0}&from=1&to=5&coords={1}", apikey, coords)
     data = json.loads(urllib.request.urlopen(url).read().decode("utf-8"))
 
     bd09 = []
@@ -116,25 +107,58 @@ def SearchPOI(access, poi, extent, limit):
     return r
 
 if __name__ == '__main__':
-    # Setting
-    apikey = "cnbF6dk3m8fohmVcnniirI6I"
+    # Configuration
+    print("========== Configuration ==========")
+    
+    # API key and access
+    f_key = codecs.open("Config/API Key.csv", "r", encoding = "utf-8-sig")
+    apikey = f_key.readlines()[1].strip().split(',')[1]
+    f_key.close()
     access = "http://api.map.baidu.com/place/v2/search?ak=" + apikey
-    region = "广州"
-    extent = [112.956429, 22.557131, 114.055893, 23.936867]
-    poi = ["地铁", "大学"]
-    limit = 760
+
+    # City and extent
+    cities = {}
+    f_city = codecs.open("Config/City.csv", "r", encoding = "utf-8-sig")
+    for f in f_city.readlines()[1:]:
+        r = f.strip().split(',')
+        if '' not in r[3:]:
+            cities[r[1]] = list(map(lambda x: float(x), r[3:]))
+        else:
+            cities[r[1]] = None
+        
+    city = input("City: ")
+    if city not in cities or cities[city] == None:
+        print("Invalid city.")
+        sys.exit(1)
+    else:
+        extent = cities[city]
+
+    # POI   
+    poi = input("POI (separated by space): ")
+    poi = poi.strip().split()
+    if len(poi) == 0:
+        print("Invalid POI.")
+        sys.exit(1)
+
+    # Search limit
+    limit = input("Number of POI per each iterative search (between 20 and 760): ")
+    limit = int(limit)
+    if limit not in range(20, 761):
+        print("Invalid number.")
+        sys.exit(1)
 
     # Get POI data
+    print("========== Process ==========")
+    
     for  p in poi:
         start = datetime.now()
-        print(str.format("POI data of {0} in {1}:", p, region))
-        print(str.format("Retrieving ({0})", start))
+        print(str.format("Retrieving POI data of {0} in {1} {2}", p, city, start))
         
         # Convert extent from WGS84 to BD09
         ext_bd09 = WGS84ToBD09(apikey, extent)            
         
         # Retrieve data
-        fname = str.format("Output/{0}_{1}.csv", region, p)
+        fname = str.format("Output/{0}_{1}.csv", city, p)
         f = codecs.open(fname, "w",  encoding = "utf-8-sig")
         f.write("UID,Name,Latitude_BD09,Longitude_BD09,Latitude_WGS84,Longitude_WGS84,Address,Telephone,Tag\n")        
         f.write(SearchPOI(access, p, ext_bd09, limit))

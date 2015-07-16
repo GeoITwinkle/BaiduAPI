@@ -166,6 +166,8 @@ def TransformLongitude(x, y):
 
 if __name__ == '__main__':
     # General test
+    print("========== General Test ==========")
+    
     print(str.format("{0}\t{1: >20}\t{2: >20}", "System", "Latitude", "Longitude"))
     
     wgs84 = {'lat': 23, 'lon': 113}
@@ -190,14 +192,16 @@ if __name__ == '__main__':
     print(str.format("WGS84\t{0: >20}\t{1: >20}", wgs84_rev['lat'], wgs84_rev['lon']))
 
     # Precision test
-    start = datetime.now()
-    print(str.format("Precision Test ({0})", start))
+    print("========== Precision Test ==========")
     
-    f_in = codecs.open("Input/Projection.csv", "r", encoding = "utf-8-sig").readlines()
+    start = datetime.now()
+    print(str.format("Testing ({0})", start))
+    
+    f_in = codecs.open("Input/Projection.csv", "r", encoding = "utf-8-sig")
     f_out = codecs.open("Output/Projection Test.csv", "w", encoding = "utf-8-sig")
     f_out.write("OBJECTID,X_WGS84,Y_WGS84,X_BD09,Y_BD09,X_WGS84_Exact,Y_WGS84_Exact,Distance_Exact,X_WGS84_Reg,Y_WGS84_Reg,Distance_Reg\n")
 
-    for f in f_in[1:]:
+    for f in f_in.readlines()[1:]:
         r = f.strip().split(',')
         [x_wgs84, y_wgs84, x_bd09, y_bd09] = map(lambda x: float(x), r[1:5])
 

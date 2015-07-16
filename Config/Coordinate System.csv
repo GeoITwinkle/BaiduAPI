@@ -1,0 +1,9 @@
+﻿ID,Coordinate System
+1,GPS设备获取的角度坐标 (WGS84)
+2,GPS获取的米制坐标、sogou地图所用坐标
+3,google地图、soso地图、aliyun地图、mapabc地图和amap地图所用坐标 (GCJ02)
+4,3中列表地图坐标对应的米制坐标
+5,百度地图采用的经纬度坐标 (BD09)
+6,百度地图采用的米制坐标 (BD09MC)
+7,mapbar地图坐标
+8,51地图坐标

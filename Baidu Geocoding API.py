@@ -7,13 +7,7 @@
 # Acknowledgement: Kejing Peng@Microsoft solved UTF-8 issues
 # License: Academic use only
 
-# Instruction
-# 1. Register a personal Baidu API key and replace it in main function
-# 2. Specify city in main function
-# 3. Format address data according to Input/Address.csv
-# 4. Run the script
-
-import urllib.request, json, codecs, os, MapProjection
+import urllib.request, json, codecs, os, sys, MapProjection
 from datetime import datetime
 
 # Utils function
@@ -62,16 +56,33 @@ def Geocode(access, city, address):
     return str.format("{0},{1},{2},{3},{4},{5},{6}", lat_bd09, lng_bd09, lat_wgs84, lng_wgs84, precise, confidence, level)
 
 if __name__ == '__main__':
-    # Setting
-    apikey = "cnbF6dk3m8fohmVcnniirI6I"
+    # Configuration
+    print("========== Configuration ==========")
+    
+    f_key = codecs.open("Config/API Key.csv", "r", encoding = "utf-8-sig")
+    apikey = f_key.readlines()[1].strip().split(',')[1]
+    f_key.close()
+    
     access = "http://api.map.baidu.com/geocoder/v2/?ak=" + apikey
-    city = "广州"
+
+    cities = {}
+    f_city = codecs.open("Config/City.csv", "r", encoding = "utf-8-sig")
+    for f in f_city.readlines()[1:]:
+        r = f.strip().split(',')
+        cities[r[1]] = r[2]
+    
+    city = input("City: ")
+    if city not in cities:
+        print("Invalid city.")
+        sys.exit(1)    
 
     # Geocode address
+    print("========== Process ==========")
+    
     start = datetime.now()
-    print(str.format("Geocoding Address in {0} ({1})", city, start))
+    print(str.format("Geocoding address in {0} ({1})", city, start))
 
-    f_in = codecs.open("Input/Address.csv", "r", encoding = "utf-8-sig").readlines()
+    f_in = codecs.open("Input/Address.csv", "r", encoding = "utf-8-sig")
     f_out = codecs.open("Output/Geocoded Address.csv", "w", encoding = "utf-8-sig")
     f_out.write("OBJECTID,Address,Latitude_BD09,Longitude_BD09,Latitude_WGS84,Longitude_WGS84,Precise,Confidence,Level\n")
 
@@ -79,7 +90,7 @@ if __name__ == '__main__':
     f_err.write("OBJECTID,ADDRESS\n")
 
     err = 0
-    for f in f_in[1:]:
+    for f in f_in.readlines()[1:]:
         try:
             [oid, address] = f.strip().split(',')            
             geocode = Geocode(access, city, address)
@@ -88,7 +99,8 @@ if __name__ == '__main__':
             f_err.write(f)
             err += 1
             continue
-                        
+
+    f_in.close()            
     f_out.close()
     f_err.close()
     os.remove("temp.txt")
