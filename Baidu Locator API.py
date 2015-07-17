@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 
-# Locator for Baidu Map
-# Supplementary for Geocoder
+# Baidu Locator
+# Supplementary for Baidu Geocoder
 
-# Requirement: Python 3.x
+# Service Provider: Baidu, Inc.
 # Developer: Xiaoxing Qin@Sun Yat-sen University
 # Acknowledgement: Kejing Peng@Microsoft provided instructions
 # License: Academic use only
+# Requirement: Python 3.x
 
 import urllib.request, json, codecs, os, sys, MapProjection
 from datetime import datetime

@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 
-# Coordinate Converter for Baidu Map
+# Baidu Coordinate Converter
 
-# Requirement: Python 3.x
+# Service Provider: Baidu, Inc.
 # Developer: Xiaoxing Qin@Sun Yat-sen University
-# Acknowledgement: Kejing Peng@Microcsoft solved UTF-8 issues
+# Acknowledgement: Kejing Peng@Microsoft provided instructions
 # License: Academic use only
+# Requirement: Python 3.x
 
 import urllib.request, json, codecs, os, sys, traceback, MapProjection
 from datetime import datetime

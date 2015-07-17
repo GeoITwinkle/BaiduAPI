@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 
-# POI Collector for Baidu Map
+# Baidu Place Collector
 
-# Requirement: Python 3.x
+# Service Provider: Baidu, Inc.
 # Developer: Xiaoxing Qin@Sun Yat-sen University
-# Acknowledgement: Kejing Peng@Microsoft solved UTF-8 issues
+# Acknowledgement: Kejing Peng@Microsoft provided instructions
 # License: Academic use only
+# Requirement: Python 3.x
 
 import urllib.request, json, codecs, os, sys, MapProjection
 from datetime import datetime

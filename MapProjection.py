@@ -3,10 +3,10 @@
 # Map Projection
 # WGS84, GCJ02, BD09, and Web Mercator
 
-# Requirement: Python 3.x
 # Developer: Xiaoxing Qin@Sun Yat-sen University
 # Acknowledgement: Code is converted and modified based on http://www.oschina.net/code/snippet_260395_39205
 # License: Academic use only
+# Requirement: Python 3.x
 
 import codecs, math
 from datetime import datetime
@@ -26,12 +26,15 @@ def Delta(lat, lon):
 
     dLat = TransformLatitude(lon - 105.0, lat - 35.0)
     dLon = TransformLongitude(lon - 105.0, lat - 35.0)
+
     radLat = lat / 180.0 * PI
     magic = math.sin(radLat)
     magic = 1 - ee * magic * magic
     sqrtMagic = math.sqrt(magic)
+
     dLat = (dLat * 180.0) / ((a * (1 - ee)) / (magic * sqrtMagic) * PI)
     dLon = (dLon * 180.0) / (a / sqrtMagic * math.cos(radLat) * PI)
+
     return {'lat': dLat, 'lon': dLon}
      
 # WGS-84 to GCJ-02
@@ -54,6 +57,7 @@ def GCJ02ToWGS84_Estimate(gcjLat, gcjLon):
 def GCJ02ToWGS84_Exact(gcjLat, gcjLon):
     initDelta = 0.01
     threshold = 0.000000001
+
     dLat = dLon = initDelta
     mLat = gcjLat - dLat
     mLon = gcjLon - dLon
@@ -64,6 +68,7 @@ def GCJ02ToWGS84_Exact(gcjLat, gcjLon):
     for i in range(1, 10001):
         wgsLat = (mLat + pLat) / 2
         wgsLon = (mLon + pLon) / 2
+
         tmp = WGS84ToGCJ02(wgsLat, wgsLon)
         dLat = tmp['lat'] - gcjLat
         dLon = tmp['lon'] - gcjLon
@@ -87,20 +92,26 @@ def GCJ02ToWGS84_Exact(gcjLat, gcjLon):
 def GCJ02ToBD09(gcjLat, gcjLon):
     x = gcjLon
     y = gcjLat  
+
     z = math.sqrt(x * x + y * y) + 0.00002 * math.sin(y * X_PI)  
     theta = math.atan2(y, x) + 0.000003 * math.cos(x * X_PI)  
+
     bdLon = z * math.cos(theta) + 0.0065  
     bdLat = z * math.sin(theta) + 0.006 
+
     return {'lat': bdLat, 'lon': bdLon}
 
 # BD-09 to GCJ-02
 def BD09ToGCJ02(bdLat, bdLon):
     x = bdLon - 0.0065
     y = bdLat - 0.006  
+
     z = math.sqrt(x * x + y * y) - 0.00002 * math.sin(y * X_PI)  
     theta = math.atan2(y, x) - 0.000003 * math.cos(x * X_PI)  
+
     gcjLon = z * math.cos(theta)  
     gcjLat = z * math.sin(theta)
+
     return {'lat': gcjLat, 'lon': gcjLon}
 
 # WGS-84 to Web Mercator
@@ -108,6 +119,7 @@ def WGS84ToWebMercator(wgsLat, wgsLon):
     x = wgsLon * 20037508.34 / 180.0
     y = math.log(math.tan((90.0 + wgsLat) * PI / 360.0)) / (PI / 180.0)
     y = y * 20037508.34 / 180.0
+
     return {'lat': y, 'lon' : x}
 
     # if abs(wgsLon) > 180 or abs(wgsLat) > 90:
@@ -122,6 +134,7 @@ def WebMercatorToWGS84(mercatorLat, mercatorLon):
     x = mercatorLon / 20037508.34 * 180.0
     y = mercatorLat / 20037508.34 * 180.0
     y = 180.0 / PI * (2 * math.atan(math.exp(y * PI / 180.0)) - PI / 2.0)
+
     return {'lat': y, 'lon' :x}
     
     # if abs(mercatorLon) < 180 and abs(mercatorLat) < 90:
@@ -136,8 +149,10 @@ def WebMercatorToWGS84(mercatorLat, mercatorLon):
 # Two point's distance
 def Distance(latA, lonA, latB, lonB):
     earthR = 6371000.0
+    
     x = math.cos(latA * PI / 180.0) * math.cos(latB * PI / 180.0) * math.cos((lonA - lonB) * PI / 180.0)
     y = math.sin(latA * PI / 180.0) * math.sin(latB * PI / 180.0)
+
     s = x + y
     if s > 1:
             s = 1
@@ -145,6 +160,7 @@ def Distance(latA, lonA, latB, lonB):
             s = -1
     alpha = math.acos(s)
     distance = alpha * earthR
+
     return distance
 
 def OutOfChina(lat, lon):
@@ -155,6 +171,7 @@ def TransformLatitude(x, y):
     ret += (20.0 * math.sin(6.0 * x * PI) + 20.0 * math.sin(2.0 * x * PI)) * 2.0 / 3.0
     ret += (20.0 * math.sin(y * PI) + 40.0 * math.sin(y / 3.0 * PI)) * 2.0 / 3.0
     ret += (160.0 * math.sin(y / 12.0 * PI) + 320 * math.sin(y * PI / 30.0)) * 2.0 / 3.0
+
     return ret
 
 def TransformLongitude(x, y):
@@ -162,6 +179,7 @@ def TransformLongitude(x, y):
     ret += (20.0 * math.sin(6.0 * x * PI) + 20.0 * math.sin(2.0 * x * PI)) * 2.0 / 3.0
     ret += (20.0 * math.sin(x * PI) + 40.0 * math.sin(x / 3.0 * PI)) * 2.0 / 3.0
     ret += (150.0 * math.sin(x / 12.0 * PI) + 300.0 * math.sin(x / 30.0 * PI)) * 2.0 / 3.0
+
     return ret
 
 class Test:
@@ -205,7 +223,7 @@ class Test:
         f_in = codecs.open("Input/Projection.csv", "r", encoding = "utf-8-sig")
         f_out = codecs.open("Output/Projection Test.csv", "w", encoding = "utf-8-sig")
         f_out.write("OBJECTID,X_WGS84,Y_WGS84,X_BD09,Y_BD09,X_WGS84_Exact,Y_WGS84_Exact,Distance_Exact,X_WGS84_Reg,Y_WGS84_Reg,Distance_Reg\n")
-
+        
         for f in f_in.readlines()[1:]:
             r = f.strip().split(',')
             [x_wgs84, y_wgs84, x_bd09, y_bd09] = map(lambda x: float(x), r[1:5])
@@ -225,7 +243,8 @@ class Test:
             d_reg = Distance(y_wgs84_reg, x_wgs84_reg, y_wgs84, x_wgs84)
 
             f_out.write(str.format("{0},{1},{2},{3},{4},{5},{6}\n", ','.join(r), x_wgs84_exact, y_wgs84_exact, d_exact, x_wgs84_reg, y_wgs84_reg, d_reg))
-            
+              
+        f_in.close()
         f_out.close()
 
         end = datetime.now()
