@@ -23,7 +23,7 @@ Description:
 API		File				Use
 Coordinate	Baidu Coordinate API.py		Convert coordintate systems
 Geocoding	Baidu Geocoding API.py		Geocode addresses
-Locator		Baidu Locator API.py		Locate addresses that cannot be geocoded Gecoding API
+Locator		Baidu Locator API.py		Locate addresses that cannot be geocoded by Geocoding API
 Place		baidu Pace API.py		Geot POI data
 
 Instruction:
