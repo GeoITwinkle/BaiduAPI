@@ -29,7 +29,7 @@ Python 3.x
 
 API	|	File			|	Use
 ------------- | -------------|-------------
-Coordinate| 	Baidu Coordinate API.py	| 	Convert coordintate systems
+Coordinate| 	Baidu Coordinate API.py	| 	Convert coordinate systems
 Geocoding| 	Baidu Geocoding API.py	| 	Geocode addresses
 Locator	| 	Baidu Locator API.py	| 	Locate addresses that cannot be geocoded by Geocoding API
 Place	| 	Baidu Place API.py	| 	Get POI data
