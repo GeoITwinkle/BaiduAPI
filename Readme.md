@@ -33,7 +33,7 @@ API	|	File			|	Use
 Coordinate| 	Baidu Coordinate API.py	| 	Convert coordintate systems
 Geocoding| 	Baidu Geocoding API.py	| 	Geocode addresses
 Locator	| 	Baidu Locator API.py	| 	Locate addresses that cannot be geocoded by Geocoding API
-Place	| 	baidu Pace API.py	| 	Geot POI data
+Place	| 	Baidu Pace API.py	| 	Get POI data
 
 #### Instruction:
 1 . Before running APIs, configure required files in Config folder
