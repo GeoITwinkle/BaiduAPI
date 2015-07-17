@@ -117,7 +117,7 @@ if __name__ == '__main__':
 
     ocs_id = input("ID of input coordinate system: ")
     if ocs_id not in cs:
-        print("Incorrect ID.")
+        print("Error: Incorrect ID.")
         sys.exit(1)        
     print()
     
@@ -128,11 +128,11 @@ if __name__ == '__main__':
 
     pcs_id = input("ID of output coordinate system: ")
     if pcs_id not in pcs_ids:
-        print("Incorrect ID.")
+        print("Error: Incorrect ID.")
         sys.exit(1)
 
     if ocs_id == pcs_id:
-        print("Same input and output coordinate systems.")
+        print("Error: Same input and output coordinate systems.")
         sys.exit(1)
     
     # Convert coordinates

@@ -115,7 +115,7 @@ if __name__ == '__main__':
 
     city = input("City: ")
     if city not in cities:
-        print("Invalid city.")
+        print("Error: Invalid city.")
         sys.exit(1)
     else:
         city_code = cities[city]

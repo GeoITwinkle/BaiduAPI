@@ -150,7 +150,7 @@ if __name__ == '__main__':
         
     city = input("City: ")
     if city not in cities or cities[city] == None:
-        print("Invalid city.")
+        print("Error: Invalid city.")
         sys.exit(1)
     else:
         extent = cities[city]
@@ -159,14 +159,14 @@ if __name__ == '__main__':
     poi = input("POI (separated by space): ")
     poi = poi.strip().split()
     if len(poi) == 0:
-        print("Invalid POI.")
+        print("Error: Invalid POI.")
         sys.exit(1)
 
     # Search limit
     limit = input("Number of POI per each iterative search (between 20 and 760): ")
     limit = int(limit)
     if limit not in range(20, 761):
-        print("Invalid number.")
+        print("Error: Invalid number.")
         sys.exit(1)
 
     # Get POI data
