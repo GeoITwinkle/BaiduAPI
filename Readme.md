@@ -3,6 +3,7 @@ Baidu API Repository
 
 #### Service Provider:
 Baidu, Inc.
+http://developer.baidu.com/map/index.php?title=webapi
 
 #### Developer:
 Xiaoxing Qin@Sun Yat-sen University
