@@ -14,7 +14,7 @@ Xiaoxing Qin@Sun Yat-sen University
 Xiaoxing.Qin@gmail.com
 
 #### Acknowledgement
-* Kejing Peng@Microsoft
+* Kejing Peng@Microsoft (https://github.com/pkkj)
 * Open source code@http://www.oschina.net/code/snippet_260395_39205
 
 #### License
