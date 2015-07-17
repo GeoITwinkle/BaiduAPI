@@ -1,32 +1,31 @@
 Baidu API Repository
 ===========
 
-#### Service Provider:
+#### Service Provider
 Baidu, Inc.
 
-#### Reference:
+#### Reference
 http://developer.baidu.com/map/index.php?title=webapi
 
-#### Developer:
+#### Developer
 Xiaoxing Qin@Sun Yat-sen University
 
-#### Contact:
+#### Contact
 Xiaoxing.Qin@gmail.com
 
-#### Acknowledgement:
+#### Acknowledgement
 * Kejing Peng@Microsoft
 * Open source code@http://www.oschina.net/code/snippet_260395_39205
 
-#### License:
+#### License
 
 Academic use only
 
-#### Requirement:
+#### Requirement
 
 Python 3.x
 
-#### Description:
-
+#### Description
 
 API	|	File			|	Use
 ------------- | -------------|-------------
@@ -35,7 +34,7 @@ Geocoding| 	Baidu Geocoding API.py	| 	Geocode addresses
 Locator	| 	Baidu Locator API.py	| 	Locate addresses that cannot be geocoded by Geocoding API
 Place	| 	Baidu Place API.py	| 	Get POI data
 
-#### Instruction:
+#### Instruction
 1 . Before running APIs, configure required files in Config folder
 
 API	|	Requirement		|	Configuration
