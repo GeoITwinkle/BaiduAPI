@@ -29,12 +29,11 @@ def WGS84ToBD09(apikey, extent):
     url = str.format("http://api.map.baidu.com/geoconv/v1/?&ak={0}&from=1&to=5&coords={1}", apikey, coords)
     data = json.loads(urllib.request.urlopen(url).read().decode("utf-8"))
 
-    bd09 = []
     if 'result' in data:
         r = data['result']
-        bd09 = [r[0]['x'], r[0]['y'], r[1]['x'], r[1]['y']]
-
-    return bd09
+        return [r[0]['x'], r[0]['y'], r[1]['x'], r[1]['y']]
+    else:        
+        return None
 
 # Load POI data
 def LoadPOI(url):
@@ -165,7 +164,7 @@ if __name__ == '__main__':
     # Search limit
     limit = input("Number of POI per each iterative search (between 20 and 760): ")
     limit = int(limit)
-    if limit not in range(20, 761):
+    if not (20 <= limit <= 760):
         print("Error: Invalid number.")
         sys.exit(1)
 

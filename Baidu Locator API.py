@@ -30,12 +30,11 @@ def BD09MCToBD09(apikey, lng, lat):
     url = str.format("http://api.map.baidu.com/geoconv/v1/?&ak={0}&from=6&to=5&coords={1}", apikey, coords)
     data = json.loads(urllib.request.urlopen(url).read().decode("utf-8"))
 
-    bd09 = []
     if 'result' in data:
-        r = data['result']
-        bd09 = [r[0]['x'], r[0]['y']]
-
-    return bd09
+        r = data['result'][0]
+        return [r['x'], r['y']]
+    else:
+        return None
 
 def Locate(apikey, city_code, address):
     url = str.format("http://api.map.baidu.com/?qt=s&c={0}&wd={1}", city_code, urllib.parse.quote(address))

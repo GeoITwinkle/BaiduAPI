@@ -146,7 +146,7 @@ def WebMercatorToWGS84(mercatorLat, mercatorLon):
     # y = (1.5707963267948966 - (2.0 * math.atan(math.exp((-1.0 * mercatorLat) / 6378137.0)))) * 57.295779513082323
     # return {'lat': y, 'lon': x}
 
-# Two point's distance
+# Distance between two points
 def Distance(latA, lonA, latB, lonB):
     earthR = 6371000.0
     
