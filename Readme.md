@@ -3,6 +3,8 @@ Baidu API Repository
 
 #### Service Provider:
 Baidu, Inc.
+
+#### Reference:
 http://developer.baidu.com/map/index.php?title=webapi
 
 #### Developer:
