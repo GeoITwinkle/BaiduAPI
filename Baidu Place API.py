@@ -47,20 +47,20 @@ def LoadPOI(url):
     if 'results' in data:    
         results = data['results']
         for r in results:
-            name = lat_bd09 = lng_bd09 = lat_wgs84 = lng_wgs84 = address = telephone = tag = uid = ''
+            name = lat_bd09 = lon_bd09 = lat_wgs84 = lon_wgs84 = address = telephone = tag = uid = ''
 
             if 'name' in r:
                 name = r['name']
                 
             if 'location' in r:                
                 lat_bd09 = r['location']['lat']            
-                lng_bd09 = r['location']['lng']
+                lon_bd09 = r['location']['lng']
                 
                 # BD09 to WGS04 conversion
-                gcj02 = MapProjection.BD09ToGCJ02(lat_bd09, lng_bd09)
+                gcj02 = MapProjection.BD09ToGCJ02(lat_bd09, lon_bd09)
                 wgs84 = MapProjection.GCJ02ToWGS84_Exact(gcj02['lat'], gcj02['lon'])
                 lat_wgs84 = wgs84['lat']
-                lng_wgs84 = wgs84['lon']
+                lon_wgs84 = wgs84['lon']
             
             if 'address'in r:
                 address = r['address']
@@ -74,7 +74,7 @@ def LoadPOI(url):
             if 'detail_info' in r:
                 tag = r['detail_info']['tag']
 
-            rs = rs + str.format("{0},\"{1}\",{2},{3},{4},{5},\"{6}\",\"{7}\",\"{8}\"\n", uid, name, lat_bd09, lng_bd09, lat_wgs84, lng_wgs84, address, telephone, tag)
+            rs = rs + str.format("{0},\"{1}\",{2},{3},{4},{5},\"{6}\",\"{7}\",\"{8}\"\n", uid, name, lat_bd09, lon_bd09, lat_wgs84, lon_wgs84, address, telephone, tag)
 
     return rs
 
@@ -142,7 +142,7 @@ if __name__ == '__main__':
     f_city = codecs.open("Config/City.csv", "r", encoding = "utf-8-sig")
     for f in f_city.readlines()[1:]:
         r = f.strip().split(',')
-        if '' not in r[3:]:
+        if all(r[3:]):
             cities[r[1]] = list(map(lambda x: float(x), r[3:]))
         else:
             cities[r[1]] = None

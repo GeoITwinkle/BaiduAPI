@@ -30,20 +30,20 @@ def Geocode(access, city, address):
     data = json.loads(f.read())
     f.close()  
         
-    lat_bd09 = lng_bd09 = lat_wgs84 = lng_wgs84 = precise = confidence = level = ''
+    lat_bd09 = lon_bd09 = lat_wgs84 = lon_wgs84 = precise = confidence = level = ''
     
     if 'result' in data:
         r = data['result']
         
         if 'location' in r:                
             lat_bd09 = r['location']['lat']            
-            lng_bd09 = r['location']['lng']
+            lon_bd09 = r['location']['lng']
             
             # BD09 to WGS04 conversion
-            gcj02 = MapProjection.BD09ToGCJ02(lat_bd09, lng_bd09)
+            gcj02 = MapProjection.BD09ToGCJ02(lat_bd09, lon_bd09)
             wgs84 = MapProjection.GCJ02ToWGS84_Exact(gcj02['lat'], gcj02['lon'])
             lat_wgs84 = wgs84['lat']
-            lng_wgs84 = wgs84['lon']
+            lon_wgs84 = wgs84['lon']
             
         if 'precise' in r:
             precise = r['precise']
@@ -54,7 +54,7 @@ def Geocode(access, city, address):
         if 'level' in r:
             level = r['level']
 
-    return str.format("{0},{1},{2},{3},{4},{5},{6}", lat_bd09, lng_bd09, lat_wgs84, lng_wgs84, precise, confidence, level)
+    return str.format("{0},{1},{2},{3},{4},{5},{6}", lat_bd09, lon_bd09, lat_wgs84, lon_wgs84, precise, confidence, level)
 
 def Process(apikey, city):
     start = datetime.now()
@@ -88,6 +88,7 @@ def Process(apikey, city):
 
     end = datetime.now()
     print(str.format("Completed ({0})", end))
+    print(str.format("Error: {0}", err))
     print(str.format("Duration: {0}", end - start))    
 
 if __name__ == '__main__':
@@ -100,11 +101,11 @@ if __name__ == '__main__':
     
     access = "http://api.map.baidu.com/geocoder/v2/?ak=" + apikey
 
-    cities = {}
+    cities = []
     f_city = codecs.open("Config/City.csv", "r", encoding = "utf-8-sig")
     for f in f_city.readlines()[1:]:
         r = f.strip().split(',')
-        cities[r[1]] = r[2]
+        cities.append(r[1])
     
     city = input("City: ")
     if city not in cities:

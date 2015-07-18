@@ -25,8 +25,8 @@ def DownloadPage(url, path):
         return
 
 # Convert WGS84 to BD09
-def BD09MCToBD09(apikey, lng, lat):
-    coords = str.format("{0},{1}", lng, lat)
+def BD09MCToBD09(apikey, lon, lat):
+    coords = str.format("{0},{1}", lon, lat)
     url = str.format("http://api.map.baidu.com/geoconv/v1/?&ak={0}&from=6&to=5&coords={1}", apikey, coords)
     data = json.loads(urllib.request.urlopen(url).read().decode("utf-8"))
 
@@ -43,26 +43,26 @@ def Locate(apikey, city_code, address):
     data = json.loads(f.read())
     f.close()  
         
-    lat_bd09mc = lng_bd09mc = lat_bd09 = lng_bd09 = lat_wgs84 = lng_wgs84 = ''
+    lat_bd09mc = lon_bd09mc = lat_bd09 = lon_bd09 = lat_wgs84 = lon_wgs84 = ''
     
     if 'content' in data:
         r = data['content'][0]
         
         if 'ext' in r:
             lat_bd09mc = r['ext']['detail_info']['point']['y']
-            lng_bd09mc = r['ext']['detail_info']['point']['x']            
+            lon_bd09mc = r['ext']['detail_info']['point']['x']            
 
             # BD09MC to BD09
-            bd09 = BD09MCToBD09(apikey, lng_bd09mc, lat_bd09mc)       
-            [lng_bd09, lat_bd09] = bd09
+            bd09 = BD09MCToBD09(apikey, lon_bd09mc, lat_bd09mc)       
+            [lon_bd09, lat_bd09] = bd09
             
             # BD09 to WGS04 conversion
-            gcj02 = MapProjection.BD09ToGCJ02(lat_bd09, lng_bd09)
+            gcj02 = MapProjection.BD09ToGCJ02(lat_bd09, lon_bd09)
             wgs84 = MapProjection.GCJ02ToWGS84_Exact(gcj02['lat'], gcj02['lon'])
             lat_wgs84 = wgs84['lat']
-            lng_wgs84 = wgs84['lon']                        
+            lon_wgs84 = wgs84['lon']                        
 
-    return str.format("{0},{1},{2},{3},{4},{5}", lat_bd09mc, lng_bd09mc, lat_bd09, lng_bd09, lat_wgs84, lng_wgs84)
+    return str.format("{0},{1},{2},{3},{4},{5}", lat_bd09mc, lon_bd09mc, lat_bd09, lon_bd09, lat_wgs84, lon_wgs84)
 
 def Process(apikey, city, city_code):
     start = datetime.now()
@@ -96,6 +96,7 @@ def Process(apikey, city, city_code):
         
     end = datetime.now()
     print(str.format("Completed ({0})", end))
+    print(str.format("Error: {0}", err))
     print(str.format("Duration: {0}", end - start))
     
 if __name__ == '__main__':
