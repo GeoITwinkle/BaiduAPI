@@ -40,7 +40,7 @@ Place	| 	Baidu Place API.py	| 	Get POI data
 API	|	Requirement		|	Configuration
 ------------- | -------------|-------------
 ALL	|	API Key.csv	|		If not your Baidu API key, replace with your key
-Coordinate|	Coordinate System.csv	|	Do NOT modify
+Coordinate|	Coordinate System.cfg	|	Do NOT modify
 Geocoding |	City.csv	|		If not listed, record the NAME of your specific city
 Locator	|	City.csv	|		If not listed, record the NAME and CODE of your specific city
 Place	|	City.csv	|		If not listed, record the NAME and EXTENT (WGS84 coordinates of lower-left and upper-right rectangle) of your specific city

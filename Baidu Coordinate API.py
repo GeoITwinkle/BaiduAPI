@@ -104,7 +104,7 @@ if __name__ == '__main__':
     f_key.close()
     
     cs = {}
-    f_cs = codecs.open("Config/Coordinate System.csv", "r", encoding = "utf-8-sig")
+    f_cs = codecs.open("Config/Coordinate System.cfg", "r", encoding = "utf-8-sig")
     for f in f_cs.readlines()[1:]:
         r = f.strip().split(',')
         cs[r[0]] = r[1]
