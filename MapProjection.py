@@ -13,6 +13,7 @@ from datetime import datetime
 
 PI = 3.14159265358979324
 X_PI = PI * 3000.0 / 180.0
+WM = 20037508.34
 
 def Delta(lat, lon):
     # Krasovsky 1940
@@ -116,35 +117,19 @@ def BD09ToGCJ02(bdLat, bdLon):
 
 # WGS-84 to Web Mercator
 def WGS84ToWebMercator(wgsLat, wgsLon):
-    x = wgsLon * 20037508.34 / 180.0
+    x = wgsLon * WM / 180.0
     y = math.log(math.tan((90.0 + wgsLat) * PI / 360.0)) / (PI / 180.0)
-    y = y * 20037508.34 / 180.0
+    y = y * WM / 180.0
 
     return {'lat': y, 'lon' : x}
 
-    # if abs(wgsLon) > 180 or abs(wgsLat) > 90:
-        # return None
-    # x = 6378137.0 * wgsLon * 0.017453292519943295
-    # a = wgsLat * 0.017453292519943295
-    # y = 3189068.5 * math.log((1.0 + math.sin(a)) / (1.0 - math.sin(a)))
-    # return {'lat': y, 'lon': x}
-
 # Web Mercator to WGS-84
-def WebMercatorToWGS84(mercatorLat, mercatorLon):
-    x = mercatorLon / 20037508.34 * 180.0
-    y = mercatorLat / 20037508.34 * 180.0
+def WebMercatorToWGS84(mLat, mLon):
+    x = mLon / WM * 180.0
+    y = mLat / WM * 180.0
     y = 180.0 / PI * (2 * math.atan(math.exp(y * PI / 180.0)) - PI / 2.0)
 
     return {'lat': y, 'lon' :x}
-    
-    # if abs(mercatorLon) < 180 and abs(mercatorLat) < 90:
-        # return None
-    # if abs(mercatorLon) > 20037508.3427892 or abs(mercatorLat) > 20037508.3427892:
-        # return None
-    # a = mercatorLon / 6378137.0 * 57.295779513082323
-    # x = a - (math.floor(((a + 180.0) / 360.0)) * 360.0)
-    # y = (1.5707963267948966 - (2.0 * math.atan(math.exp((-1.0 * mercatorLat) / 6378137.0)))) * 57.295779513082323
-    # return {'lat': y, 'lon': x}
 
 # Distance between two points
 def Distance(latA, lonA, latB, lonB):
@@ -170,7 +155,7 @@ def TransformLatitude(x, y):
     ret = -100.0 + 2.0 * x + 3.0 * y + 0.2 * y * y + 0.1 * x * y + 0.2 * math.sqrt(abs(x))
     ret += (20.0 * math.sin(6.0 * x * PI) + 20.0 * math.sin(2.0 * x * PI)) * 2.0 / 3.0
     ret += (20.0 * math.sin(y * PI) + 40.0 * math.sin(y / 3.0 * PI)) * 2.0 / 3.0
-    ret += (160.0 * math.sin(y / 12.0 * PI) + 320 * math.sin(y * PI / 30.0)) * 2.0 / 3.0
+    ret += (160.0 * math.sin(y / 12.0 * PI) + 320.0 * math.sin(y * PI / 30.0)) * 2.0 / 3.0
 
     return ret
 
