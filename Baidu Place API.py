@@ -135,6 +135,13 @@ if __name__ == '__main__':
     f_key = codecs.open("Config/API Key.csv", "r", encoding = "utf-8-sig")
     apikey = f_key.readlines()[1].strip().split(',')[1]
     f_key.close()
+
+    url = str.format("http://api.map.baidu.com/geoconv/v1/?&ak={0}&from=1&to=5&coords=113,23", apikey)
+    data = json.loads(urllib.request.urlopen(url).read().decode("utf-8"))
+    if data['status'] != 0:
+        print("Invalid API key.")
+        sys.exit(1)
+        
     access = "http://api.map.baidu.com/place/v2/search?ak=" + apikey
 
     # City and extent
