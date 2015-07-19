@@ -148,8 +148,11 @@ if __name__ == '__main__':
             cities[r[1]] = None
         
     city = input("City: ")
-    if city not in cities or cities[city] == None:
+    if city not in cities:
         print("Error: Invalid city.")
+        sys.exit(1)
+    elif cities[city] == None:
+        print("Error: Invalid city extent.")
         sys.exit(1)
     else:
         extent = cities[city]
