@@ -53,7 +53,6 @@ def Process(apikey, cs, ocs_id, pcs_id):
 
             if os.path.exists("Output/Projected Coordinate.csv"):
                 os.remove("Output/Projected Coordinate.csv")
-
             os.rename("Output/Temp.csv", "Output/Projected Coordinate.csv")
         elif pcs_id in ["1", "3"]:
             fl = None

@@ -44,9 +44,8 @@ def LoadPOI(url):
 
     rs = ''
 
-    if 'results' in data:    
-        results = data['results']
-        for r in results:
+    if 'results' in data:
+        for r in data['results']:
             name = lat_bd09 = lon_bd09 = lat_wgs84 = lon_wgs84 = address = telephone = tag = uid = ''
 
             if 'name' in r:
@@ -85,9 +84,7 @@ def SearchPOI(apikey, poi, extent, limit):
 
     # Get the number of records in extent    
     data = json.loads(urllib.request.urlopen(url).read().decode("utf-8"))   
-    total = -1
-    if 'total' in data:
-        total = data['total']
+    total = data['total'] if 'total' in data else -1
 
     # Quadrant search
     r = ''
@@ -102,12 +99,12 @@ def SearchPOI(apikey, poi, extent, limit):
         ext_nw = [x1, (y1 + y2) / 2, (x1 + x2) / 2, y2]
         ext_sw = [x1, y1, (x1 + x2) / 2, (y1 + y2) / 2]
         ext_se = [(x1 + x2) / 2, y1, x2, (y1 + y2) / 2]
-        r = SearchPOI(access, poi, ext_ne, limit) + SearchPOI(access, poi, ext_nw, limit) + SearchPOI(access, poi, ext_sw, limit) + SearchPOI(access, poi, ext_se, limit)
+        r = SearchPOI(apikey, poi, ext_ne, limit) + SearchPOI(apikey, poi, ext_nw, limit) + SearchPOI(apikey, poi, ext_sw, limit) + SearchPOI(apikey, poi, ext_se, limit)
 
     return r
 
 # Retrieve POI data
-def Process(apikey, poi, city, extent):
+def Process(apikey, poi, city, extent, limit):
     for  p in poi:
         start = datetime.now()
         print(str.format("Retrieving POI data of {0} in {1} ({2})", p, city, start))
@@ -116,8 +113,8 @@ def Process(apikey, poi, city, extent):
         ext_bd09 = WGS84ToBD09(apikey, extent)            
         
         # Retrieve data
-        fname = str.format("Output/{0}_{1}.csv", city, p)
-        f = codecs.open(fname, "w",  encoding = "utf-8-sig")
+        path = str.format("Output/{0}_{1}.csv", city, p)
+        f = codecs.open(path, "w",  encoding = "utf-8-sig")
         f.write("UID,Name,Latitude_BD09,Longitude_BD09,Latitude_WGS84,Longitude_WGS84,Address,Telephone,Tag\n")        
         f.write(SearchPOI(apikey, p, ext_bd09, limit))
         f.close()
@@ -131,7 +128,7 @@ if __name__ == '__main__':
     # Configuration
     print("========== Configuration ==========")
     
-    # API key and access
+    # API key
     f_key = codecs.open("Config/API Key.csv", "r", encoding = "utf-8-sig")
     apikey = f_key.readlines()[1].strip().split(',')[1]
     f_key.close()
@@ -156,7 +153,7 @@ if __name__ == '__main__':
     if city not in cities:
         print("Error: Invalid city.")
         sys.exit(1)
-    elif cities[city] == None:
+    elif not cities[city]:
         print("Error: Invalid city extent.")
         sys.exit(1)
     else:
@@ -178,4 +175,4 @@ if __name__ == '__main__':
 
     # Get POI data
     print("========== Process ==========")
-    Process(apikey, poi, city, extent)
+    Process(apikey, poi, city, extent, limit)

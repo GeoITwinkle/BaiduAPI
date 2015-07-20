@@ -123,7 +123,7 @@ if __name__ == '__main__':
     if city not in cities:
         print("Error: Invalid city.")
         sys.exit(1)
-    elif cities[city] == '':
+    elif not cities[city]:
         print("Error: Invalid city code.")
         sys.exit(1)
     else:
