@@ -63,7 +63,7 @@ def Process(apikey, cs, ocs_id, pcs_id):
                 fl = f_in.readlines()
                 f_out.close()
             else:
-                ConvertToBD09(apikey, f_in, f_out, ocs_id, 5)
+                ConvertToBD09(apikey, f_in, f_out, ocs_id, "5")
                 f_in_new = codecs.open("Output/Temp.csv", "r", encoding = "utf-8-sig")
                 fl = f_in_new.readlines()
 
@@ -126,7 +126,7 @@ if __name__ == '__main__':
         sys.exit(1)        
     print()
     
-    pcs_ids = filter(lambda x: x != ocs_id, ["1", "3", "5", "6"])
+    pcs_ids = list(filter(lambda x: x != ocs_id, ["1", "3", "5", "6"]))
     print("ID\tOutput Coordinate System")
     for pcs in pcs_ids:
         print(str.format("{0}\t{1}", pcs, cs[pcs]))
@@ -134,10 +134,6 @@ if __name__ == '__main__':
     pcs_id = input("ID of output coordinate system: ")
     if pcs_id not in pcs_ids:
         print("Error: Incorrect ID.")
-        sys.exit(1)
-
-    if ocs_id == pcs_id:
-        print("Error: Same input and output coordinate systems.")
         sys.exit(1)
     
     # Convert coordinates
