@@ -23,8 +23,8 @@ def DownloadPage(url, path):
         print("Page not found")
         return
 
-def Geocode(access, city, address):
-    url = str.format("{0}&output=json&city={1}&address={2}", access, urllib.parse.quote(city), urllib.parse.quote(address))
+def Geocode(apikey, city, address):
+    url = str.format("http://api.map.baidu.com/geocoder/v2/?ak={0}&output=json&city={1}&address={2}", apikey, urllib.parse.quote(city), urllib.parse.quote(address))
     DownloadPage(url, "temp.txt")
     f = codecs.open("temp.txt", "r", encoding = "utf-8")
     data = json.loads(f.read())
@@ -71,7 +71,7 @@ def Process(apikey, city):
     for f in f_in.readlines()[1:]:
         try:
             [oid, address] = f.strip().split(',')            
-            geocode = Geocode(access, city, address)
+            geocode = Geocode(apikey, city, address)
             f_out.write(str.format("{0},{1},{2}\n", oid, address, geocode))
         except:
             f_err.write(f)
@@ -104,8 +104,6 @@ if __name__ == '__main__':
     if data['status'] != 0:
         print("Invalid API key.")
         sys.exit(1)
-    
-    access = "http://api.map.baidu.com/geocoder/v2/?ak=" + apikey
 
     cities = []
     f_city = codecs.open("Config/City.csv", "r", encoding = "utf-8-sig")
