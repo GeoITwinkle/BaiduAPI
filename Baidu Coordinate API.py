@@ -126,9 +126,9 @@ if __name__ == '__main__':
         sys.exit(1)        
     print()
     
-    pcs_ids = ["1", "3", "5", "6"]
+    pcs_ids = filter(lambda x: x != ocs_id, ["1", "3", "5", "6"])
     print("ID\tOutput Coordinate System")
-    for pcs in filter(lambda x: x != ocs_id, pcs_ids):
+    for pcs in pcs_ids:
         print(str.format("{0}\t{1}", pcs, cs[pcs]))
 
     pcs_id = input("ID of output coordinate system: ")

@@ -162,7 +162,7 @@ if __name__ == '__main__':
     # POI   
     poi = input("POI (separated by space): ")
     poi = poi.strip().split()
-    if len(poi) == 0:
+    if not poi:
         print("Error: Invalid POI.")
         sys.exit(1)
 
