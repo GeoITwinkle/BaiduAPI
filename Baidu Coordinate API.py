@@ -8,7 +8,7 @@
 # License: Academic use only
 # Requirement: Python 3.x
 
-import urllib.request, json, codecs, os, sys, traceback, MapProjection
+import urllib.request, json, codecs, os, sys, MapProjection
 from datetime import datetime
 
 # Convert to B009 (Degree or Meter)
@@ -54,7 +54,7 @@ def Process(apikey, cs, ocs_id, pcs_id):
             if os.path.exists("Output/Projected Coordinate.csv"):
                 os.remove("Output/Projected Coordinate.csv")
             os.rename("Output/Temp.csv", "Output/Projected Coordinate.csv")
-        elif pcs_id in ["1", "3"]:
+        else: # ["1", "3"]
             fl = None
             f_out_new = codecs.open("Output/Projected Coordinate.csv", "w", encoding = "utf-8-sig")    
             f_out_new.write("OBJECTID,X_Origin,Y_Origin,X_Projected,Y_Projected\n")        
@@ -81,18 +81,16 @@ def Process(apikey, cs, ocs_id, pcs_id):
                     x = gcj02['lon']
                     y = gcj02['lat']
                 f_out_new.write(str.format("{0},{1},{2}\n", ','.join(r[:3]), x, y))
-                
+
+            f_in_new.close()
             os.remove("Output/Temp.csv")
-        else:
-            raise Exception
         
         end = datetime.now()
         print(str.format("Completed ({0})", end))
         print(str.format("Duration: {0}", end - start))
 
-    except:
-        msg = traceback.format_exc()
-        print("Error:\n" + msg)
+    except Exception as e:
+        print("Error:\n" + e)
         
 if __name__ == '__main__':
     # Configuration
