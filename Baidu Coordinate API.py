@@ -40,14 +40,14 @@ def ConvertToBD09(apikey, f_in, f_out, ocs_id, pcs_id):
 
 # Convert coordinates
 def Process(apikey, cs, ocs_id, pcs_id):
-    try:
-        start = datetime.now()
-        print(str.format("Converting {0} to {1} ({2})", cs[ocs_id], cs[pcs_id], start))
+    start = datetime.now()
+    print(str.format("Converting {0} to {1} ({2})", cs[ocs_id], cs[pcs_id], start))
 
-        f_in = codecs.open("Input/Origin Coordinate.csv", "r", encoding = "utf-8-sig")
-        f_out = codecs.open("Output/Temp.csv", "w", encoding = "utf-8-sig")    
-        f_out.write("OBJECTID,X_Origin,Y_Origin,X_Projected,Y_Projected\n")
-    
+    f_in = codecs.open("Input/Origin Coordinate.csv", "r", encoding = "utf-8-sig")
+    f_out = codecs.open("Output/Temp.csv", "w", encoding = "utf-8-sig")    
+    f_out.write("OBJECTID,X_Origin,Y_Origin,X_Projected,Y_Projected\n")
+
+    try:    
         if pcs_id in ["5", "6"]:
             ConvertToBD09(apikey, f_in, f_out, ocs_id, pcs_id)
 
@@ -66,6 +66,7 @@ def Process(apikey, cs, ocs_id, pcs_id):
                 ConvertToBD09(apikey, f_in, f_out, ocs_id, "5")
                 f_in_new = codecs.open("Output/Temp.csv", "r", encoding = "utf-8-sig")
                 fl = f_in_new.readlines()
+                f_in_new.close()
 
             for f in fl[1:]:            
                 r = f.strip().split(',')
@@ -81,16 +82,14 @@ def Process(apikey, cs, ocs_id, pcs_id):
                     x = gcj02['lon']
                     y = gcj02['lat']
                 f_out_new.write(str.format("{0},{1},{2}\n", ','.join(r[:3]), x, y))
-
-            f_in_new.close()
-            os.remove("Output/Temp.csv")
-        
-        end = datetime.now()
-        print(str.format("Completed ({0})", end))
-        print(str.format("Duration: {0}", end - start))
-
+            
+            os.remove("Output/Temp.csv")            
     except Exception as e:
-        print("Error: " + e)
+        print("Error: " + str(e))
+        
+    end = datetime.now()
+    print(str.format("Completed ({0})", end))
+    print(str.format("Duration: {0}", end - start))
         
 if __name__ == '__main__':
     # Configuration
