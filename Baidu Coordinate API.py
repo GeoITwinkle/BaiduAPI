@@ -90,7 +90,7 @@ def Process(apikey, cs, ocs_id, pcs_id):
         print(str.format("Duration: {0}", end - start))
 
     except Exception as e:
-        print("Error:\n" + e)
+        print("Error: " + e)
         
 if __name__ == '__main__':
     # Configuration
@@ -119,9 +119,9 @@ if __name__ == '__main__':
         print(str.format("{0}\t{1}", ocs, cs[ocs]))    
 
     ocs_id = input("ID of input coordinate system: ")
-    if ocs_id not in cs:
+    while ocs_id not in cs:
         print("Error: Incorrect ID.")
-        sys.exit(1)        
+        ocs_id = input("ID of input coordinate system: ")      
     print()
     
     pcs_ids = list(filter(lambda x: x != ocs_id, ["1", "3", "5", "6"]))
@@ -130,9 +130,9 @@ if __name__ == '__main__':
         print(str.format("{0}\t{1}", pcs, cs[pcs]))
 
     pcs_id = input("ID of output coordinate system: ")
-    if pcs_id not in pcs_ids:
+    while pcs_id not in pcs_ids:
         print("Error: Incorrect ID.")
-        sys.exit(1)
+        pcs_id = input("ID of output coordinate system: ")
     
     # Convert coordinates
     print("========== Process ==========")
