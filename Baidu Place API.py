@@ -115,8 +115,14 @@ def Process(apikey, poi, city, extent, limit):
         # Retrieve data
         path = str.format("Output/{0}_{1}.csv", city, p)
         f = codecs.open(path, "w",  encoding = "utf-8-sig")
-        f.write("UID,Name,Latitude_BD09,Longitude_BD09,Latitude_WGS84,Longitude_WGS84,Address,Telephone,Tag\n")        
-        f.write(SearchPOI(apikey, p, ext_bd09, limit))
+        f.write("UID,Name,Latitude_BD09,Longitude_BD09,Latitude_WGS84,Longitude_WGS84,Address,Telephone,Tag\n")
+
+        try:
+            result = SearchPOI(apikey, p, ext_bd09, limit)
+            f.write(result)
+        except Exception as e:
+            print("Error: " + str(e))
+
         f.close()
         os.remove("temp.txt")
 
