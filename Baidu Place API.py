@@ -124,7 +124,9 @@ def Process(apikey, poi, city, extent, limit):
             print("Error: " + str(e))
 
         f.close()
-        os.remove("temp.txt")
+
+        if os.path.exists("temp.txt"):
+            os.remove("temp.txt")
 
         end = datetime.now()
         print(str.format("Completed ({0})", end))

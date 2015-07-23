@@ -81,8 +81,9 @@ def Process(apikey, city):
     f_in.close()            
     f_out.close()
     f_err.close()
-    os.remove("temp.txt")
-
+    
+    if os.path.exists("temp.txt"):
+        os.remove("temp.txt")
     if err == 0:
         os.remove("Output/Geocoding Error.csv")
 
