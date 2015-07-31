@@ -140,9 +140,9 @@ def Distance(latA, lonA, latB, lonB):
 
     s = x + y
     if s > 1:
-            s = 1
+        s = 1
     if s < -1:
-            s = -1
+        s = -1
     alpha = math.acos(s)
     distance = alpha * earthR
 
