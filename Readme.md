@@ -8,7 +8,7 @@ Baidu, Inc.
 http://developer.baidu.com/map/index.php?title=webapi
 
 #### Developer
-Xiaoxing Qin@Sun Yat-sen University
+Xiaoxing Qin@Geonamic Systems Inc.
 
 #### Contact
 Xiaoxing.Qin@gmail.com
